@@ -1,0 +1,23 @@
+{
+  "name": "nftshuffle",
+  "version": "1.0.0",
+  "description": "NFTHack 2022: NFT that points to a random number.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scammi/NFTShuffle.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/scammi/NFTShuffle/issues"
+  },
+  "homepage": "https://github.com/scammi/NFTShuffle#readme",
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.4.2"
+  }
+}
