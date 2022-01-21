@@ -45,8 +45,8 @@ contract ShuffleOne is ERC721{
 
     /// @notice Enters raffle 
     function buyTicket() public {
-        require(_ticketsCounter.current() < AVAILABLE_SUPPLY, "All tickets sold");
-        require(participants[msg.sender].ownTickets != MAX_PER_ADDRESS, "Address owns ticket");
+        require(_ticketsCounter.current() <= AVAILABLE_SUPPLY, "All tickets sold");
+        require(participants[msg.sender].ownTickets == MAX_PER_ADDRESS, "Address owns ticket");
 
         participants[msg.sender].ownTickets++;
         _ticketsCounter.increment();
@@ -79,7 +79,10 @@ contract ShuffleOne is ERC721{
         require(index < NFTsID.length);
 
         NFTsID[index] = NFTsID[NFTsID.length-1];
-
         NFTsID.pop();
+    }
+
+    function _baseURI() internal view override virtual returns (string memory) {
+        return "https://ipfs.io/ipfs/QmQxDjEhnYP6QAtLRyLV9N7dn1kDigz7iWnx5psmyXqy35/";
     }
 }
