@@ -1,8 +1,15 @@
-# NFTShuffle
-NFTHack 2022: NFT that points to a random number. 
+# Basic Sample Hardhat Project
 
-Ownership of a random number, by minting this NFT, the address owner will gain ownership of a number from a randomly shuffled array.  This is an abstract implementation, meant to be apply in context of gaming and fair distribution mechanics.
+This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.
 
-The project consists of an simple ERC721 contract, the tokenId is used and pointer to a shuffled number array. The shuffled array is mixed using and implementation of the Fisher-Yates shuffle algorithm in solidity. Used remix IDE to create contract, and used openZepellin contracts
+Try running some of the following tasks:
 
-https://rinkeby.etherscan.io/address/0x69f1A993227769d9cE628D70BEf5a2F2844d8496
+```shell
+npx hardhat accounts
+npx hardhat compile
+npx hardhat clean
+npx hardhat test
+npx hardhat node
+node scripts/sample-script.js
+npx hardhat help
+```
