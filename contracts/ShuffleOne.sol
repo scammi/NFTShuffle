@@ -24,7 +24,7 @@ contract ShuffleOne is ERC721{
     /// @notice Avalible NFTs to be minted
     uint256 public immutable AVAILABLE_SUPPLY = 5;
     /// @notice Maximum tickets per address
-    uint256 public immutable MAX_PER_ADDRESS = 1;
+    uint256 public MAX_PER_ADDRESS = 1;
 
     /// ============ Mutable storage ============
 

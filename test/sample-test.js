@@ -38,7 +38,11 @@ describe("ShuffleOne", function() {
   })
 
   it("Cannot buy more than maximum per address", async ()=> {
-    await raffle.buyTicket();
+    const max_per_address = await raffle.MAX_PER_ADDRESS();
+
+    for(let i = 0; i < max_per_address.toNumber(); i++ ) {
+      await raffle.buyTicket();
+    }
     await expect(raffle.buyTicket()).to.be.revertedWith("Address owns ticket");
   })
 })
