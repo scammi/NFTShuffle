@@ -16,7 +16,7 @@ contract ShuffleOne is ERC721{
     struct Participant {
         uint256 tokenId;
         uint256 randomIdex;
-        bool minted;
+        uint256 minted;
         uint256 ownedTickets; 
     }
 
@@ -65,16 +65,15 @@ contract ShuffleOne is ERC721{
     /// @notice Generate rand index for the NFTid, mint NFT and remove it from array 
     function mint() public {
         require(participants[msg.sender].ownedTickets > 0, "Address does not own a ticket");
-        require(!participants[msg.sender].minted, "Already minted");
+        require(participants[msg.sender].minted < MAX_PER_ADDRESS, "Max allow per address minted");
         //@todo require(timerDone & allMinted)
 
         uint256 randomIndex = getRandmonIndex();
-
         _mint(msg.sender, NFTsID[randomIndex]);
         removeIndexFromArray(randomIndex);
 
         participants[msg.sender].randomIdex = randomIndex;
-        participants[msg.sender].minted = true;
+        participants[msg.sender].minted++;
     }
 
     /// @notice Get a random index from the NFTsID array 

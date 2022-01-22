@@ -50,7 +50,7 @@ describe("ShuffleOne", function() {
       await mint.wait();
 
       const participant = await raffle.participants(await ethers.provider.getSigner().getAddress());
-      expect(participant.minted).to.equal(true);
+      expect(participant.minted).to.equal(1);
     });
 
     it("Can't mint with no ticket", async() => {
@@ -64,7 +64,7 @@ describe("ShuffleOne", function() {
       const mint = await raffle.mint();
       await mint.wait();
 
-      await expect(raffle.mint()).to.be.revertedWith("Already minted");
+      await expect(raffle.mint()).to.be.revertedWith("Max allow per address minted");
     });
   });
 
