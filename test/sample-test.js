@@ -3,7 +3,6 @@ const { ethers } = require("hardhat");
 
 describe("ShuffleOne", function() {
   let raffle;
-
   beforeEach(async() => {
     const Raffle = await ethers.getContractFactory("ShuffleOne");
     raffle = await Raffle.deploy(5);
@@ -11,32 +10,50 @@ describe("ShuffleOne", function() {
 
   });
 
-  it("Should buy a ticket", async function() {
-    const ticket = await raffle.buyTicket();
-    await ticket.wait();
+  describe("BuyTicket", function() {
 
-    const participant = await raffle.participants(await ethers.provider.getSigner().getAddress());
-    expect(participant.ownTickets).to.equal(1);
+    it("Should buy a ticket", async() => {
+      const ticket = await raffle.buyTicket();
+      await ticket.wait();
+  
+      const participant = await raffle.participants(await ethers.provider.getSigner().getAddress());
+      expect(participant.ownedTickets).to.equal(1);
+    });
+  
+    it("Cannot buy more than maximum per address", async() => {
+      const max_per_address = await raffle.MAX_PER_ADDRESS();
+  
+      for(let i = 0; i < max_per_address.toNumber(); i++ ) {
+        await raffle.buyTicket();
+      }
+      await expect(raffle.buyTicket()).to.be.revertedWith("Address owns ticket");
+    });
+  
+    it("Revert when buying more than the available supply", async() => {
+      const available_supply = await raffle.AVAILABLE_SUPPLY();
+      
+      const accounts = await createWallets(available_supply.toNumber());
+  
+      await Promise.all(accounts.map(acc => raffle.connect(acc).buyTicket()))
+
+      await expect(raffle.buyTicket()).to.be.revertedWith("All tickets sold");
+    });
   });
 
-  it("Cannot buy more than maximum per address", async() => {
-    const max_per_address = await raffle.MAX_PER_ADDRESS();
+  describe("Mint token", function() {
 
-    for(let i = 0; i < max_per_address.toNumber(); i++ ) {
-      await raffle.buyTicket();
-    }
-    await expect(raffle.buyTicket()).to.be.revertedWith("Address owns ticket");
+    it("Mints single token", async() => {
+      const ticket = await raffle.buyTicket();
+      await ticket.wait();
+
+      const mint = await raffle.mint();
+      await mint.wait();
+
+      const participant = await raffle.participants(await ethers.provider.getSigner().getAddress());
+      expect(participant.minted).to.equal(true);
+    })
   });
 
-  it("Revert when buying more than the available supply", async() => {
-    const available_supply = await raffle.AVAILABLE_SUPPLY();
-    
-    const accounts = await createWallets(available_supply.toNumber());
-
-    await Promise.all(accounts.map(acc => raffle.connect(acc).buyTicket()))
-
-    await expect(raffle.buyTicket()).to.be.revertedWith("All tickets sold");
-  });
 })
 
 async function createWallets(amount) {
