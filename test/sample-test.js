@@ -86,12 +86,11 @@ describe("ShuffleOne", function() {
         const mint = await raffle.connect(accounts[i]).mint();
         await mint.wait();
 
+        // console.log(await raffle.participants(accounts[i].getAddress()))
         expect(await raffle.getNFTsIdLength()).to.be.equal(i);
       }
     });
-
   });
-
 })
 
 async function createWallets(amount) {

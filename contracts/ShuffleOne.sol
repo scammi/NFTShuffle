@@ -69,10 +69,13 @@ contract ShuffleOne is ERC721{
         //@todo require(timerDone & allMinted)
 
         uint256 randomIndex = getRandmonIndex();
-        _mint(msg.sender, NFTsId[randomIndex]);
+        uint256 randomNFTsId = NFTsId[randomIndex];
+
+        _mint(msg.sender, randomNFTsId);
         removeIndexFromArray(randomIndex);
 
         participants[msg.sender].randomIdex = randomIndex;
+        participants[msg.sender].tokenId = randomNFTsId;
         participants[msg.sender].minted++;
     }
 
@@ -91,7 +94,6 @@ contract ShuffleOne is ERC721{
     }
 
     function getNFTsIdLength() public view returns (uint256) {
-
         return NFTsId.length;
     }
 
