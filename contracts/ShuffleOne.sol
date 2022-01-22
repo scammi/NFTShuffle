@@ -13,8 +13,9 @@ contract ShuffleOne is ERC721{
 
     /// ============ Structs ============
 
-    struct Participant { 
+    struct Participant {
         uint256 tokenId;
+        uint256 randomIdex;
         bool minted;
         uint256 ownedTickets; 
     }
@@ -42,7 +43,7 @@ contract ShuffleOne is ERC721{
     constructor(
         uint256 _AVAILABLE_SUPPLY
     ) 
-    ERC721("Random NFT", "rNFT"){
+    ERC721("Random NFT", "rNFT") {
         AVAILABLE_SUPPLY = _AVAILABLE_SUPPLY;
     }
 
@@ -69,7 +70,7 @@ contract ShuffleOne is ERC721{
 
         uint256 randomIndex = getRandmonIndex();
 
-        _mint(msg.sender, randomIndex);
+        _mint(msg.sender, NFTsID[randomIndex]);
         removeIndexFromArray(randomIndex);
 
         participants[msg.sender].minted = true;
