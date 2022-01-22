@@ -30,7 +30,7 @@ contract ShuffleOne is ERC721{
     /// ============ Mutable storage ============
 
     /// @notice Array of NFTs ID to be minted 
-    uint256[] public NFTsID;
+    uint256[] public NFTsId;
     /// @notice Source of entropy
     uint256 public entropy = block.timestamp;
     /// @notice Keep track of participants 
@@ -57,7 +57,7 @@ contract ShuffleOne is ERC721{
         participants[msg.sender].ownedTickets++;
         _ticketsCounter.increment();
 
-        NFTsID.push(_ticketsCounter.current()); 
+        NFTsId.push(_ticketsCounter.current()); 
 
         return true;
     }
@@ -69,25 +69,30 @@ contract ShuffleOne is ERC721{
         //@todo require(timerDone & allMinted)
 
         uint256 randomIndex = getRandmonIndex();
-        _mint(msg.sender, NFTsID[randomIndex]);
+        _mint(msg.sender, NFTsId[randomIndex]);
         removeIndexFromArray(randomIndex);
 
         participants[msg.sender].randomIdex = randomIndex;
         participants[msg.sender].minted++;
     }
 
-    /// @notice Get a random index from the NFTsID array 
+    /// @notice Get a random index from the NFTsId array 
     function getRandmonIndex() internal view returns (uint) {
-        return uint(keccak256(abi.encodePacked(entropy))) % NFTsID.length;
+        return uint(keccak256(abi.encodePacked(entropy))) % NFTsId.length;
     }
 
     /// @notice Delete minted id from array 
-    /// @param index element to be deleted from NFTsID after bein minted
+    /// @param index element to be deleted from NFTsId after bein minted
     function removeIndexFromArray(uint index) internal {
-        require(index < NFTsID.length);
+        require(index < NFTsId.length);
 
-        NFTsID[index] = NFTsID[NFTsID.length-1];
-        NFTsID.pop();
+        NFTsId[index] = NFTsId[NFTsId.length-1];
+        NFTsId.pop();
+    }
+
+    function getNFTsIdLength() public view returns (uint256) {
+
+        return NFTsId.length;
     }
 
     function _baseURI() internal view override virtual returns (string memory) {

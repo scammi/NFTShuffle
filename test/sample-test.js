@@ -2,12 +2,14 @@ const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
 describe("ShuffleOne", function() {
-  let raffle;
+  let raffle, AVAILABLE_SUPPLY;
+
   beforeEach(async() => {
     const Raffle = await ethers.getContractFactory("ShuffleOne");
     raffle = await Raffle.deploy(5);
     await raffle.deployed();
 
+   AVAILABLE_SUPPLY = await raffle.AVAILABLE_SUPPLY(); 
   });
 
   describe("BuyTicket", function() {
@@ -30,9 +32,8 @@ describe("ShuffleOne", function() {
     });
   
     it("Revert when buying more than the available supply", async() => {
-      const available_supply = await raffle.AVAILABLE_SUPPLY();
       
-      const accounts = await createWallets(available_supply.toNumber());
+      const accounts = await createWallets(AVAILABLE_SUPPLY);
   
       await Promise.all(accounts.map(acc => raffle.connect(acc).buyTicket()))
 
@@ -66,6 +67,29 @@ describe("ShuffleOne", function() {
 
       await expect(raffle.mint()).to.be.revertedWith("Max allow per address minted");
     });
+
+    it("NFTsIds to be minted should have a length equal to the numbers of tickets bought", async() => {
+      const accounts = await createWallets(AVAILABLE_SUPPLY);
+
+      await Promise.all(accounts.map(acc => raffle.connect(acc).buyTicket()));
+      expect(await raffle.getNFTsIdLength()).to.equal(AVAILABLE_SUPPLY);
+    });
+
+    it("NFTsId length should decrease on every mint", async() => {
+      const accounts = await createWallets(5);
+
+      await Promise.all(accounts.map(acc => raffle.connect(acc).buyTicket()));
+
+      for(let i = AVAILABLE_SUPPLY.toNumber(); i > 0; i--) {
+
+        const mint = await raffle.connect(accounts[i- 1]).mint();
+        await mint.wait();
+
+        expect(await raffle.getNFTsIdLength()).to.be.equal(i-1);
+      }
+
+    });
+
   });
 
 })
