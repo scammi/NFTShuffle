@@ -6,7 +6,7 @@ describe("ShuffleOne", function() {
 
   beforeEach(async() => {
     const Raffle = await ethers.getContractFactory("ShuffleOne");
-    raffle = await Raffle.deploy();
+    raffle = await Raffle.deploy(5);
     await raffle.deployed();
 
   });

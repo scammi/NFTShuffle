@@ -14,15 +14,15 @@ contract ShuffleOne is ERC721{
     /// ============ Structs ============
 
     struct Participant { 
-        uint256 id;
+        uint256 tokenId;
         bool minted;
-        uint256 ownTickets; 
+        uint256 ownedTickets; 
     }
 
     /// ============ Immutable storage ============
 
     /// @notice Avalible NFTs to be minted
-    uint256 public immutable AVAILABLE_SUPPLY = 5;
+    uint256 public immutable AVAILABLE_SUPPLY;
     /// @notice Maximum tickets per address
     uint256 public MAX_PER_ADDRESS = 1;
 
@@ -39,16 +39,21 @@ contract ShuffleOne is ERC721{
 
     /// ============ Constructor ============
 
-    constructor() ERC721("Random NFT", "rNFT"){}
+    constructor(
+        uint256 _AVAILABLE_SUPPLY
+    ) 
+    ERC721("Random NFT", "rNFT"){
+        AVAILABLE_SUPPLY = _AVAILABLE_SUPPLY;
+    }
 
     /// ============ Functions ============
 
     /// @notice Enters raffle 
     function buyTicket() public returns (bool){
         require(_ticketsCounter.current() < AVAILABLE_SUPPLY, "All tickets sold");
-        require(participants[msg.sender].ownTickets < MAX_PER_ADDRESS, "Address owns ticket");
+        require(participants[msg.sender].ownedTickets < MAX_PER_ADDRESS, "Address owns ticket");
 
-        participants[msg.sender].ownTickets++;
+        participants[msg.sender].ownedTickets++;
         _ticketsCounter.increment();
 
         NFTsID.push(_ticketsCounter.current()); 
@@ -58,7 +63,7 @@ contract ShuffleOne is ERC721{
 
     /// @notice Generate rand index for the NFTid, mint NFT and remove it from array 
     function mint() public {
-        require(participants[msg.sender].ownTickets > 0, "Address does not own a ticket");
+        require(participants[msg.sender].ownedTickets > 0, "Address does not own a ticket");
         require(!participants[msg.sender].minted, "Already minted");
         //@todo require(timerDone & allMinted)
 
