@@ -44,14 +44,16 @@ contract ShuffleOne is ERC721{
     /// ============ Functions ============
 
     /// @notice Enters raffle 
-    function buyTicket() public {
+    function buyTicket() public returns (bool){
         require(_ticketsCounter.current() <= AVAILABLE_SUPPLY, "All tickets sold");
-        require(participants[msg.sender].ownTickets == MAX_PER_ADDRESS, "Address owns ticket");
+        require(participants[msg.sender].ownTickets <= MAX_PER_ADDRESS, "Address owns ticket");
 
         participants[msg.sender].ownTickets++;
         _ticketsCounter.increment();
 
         NFTsID.push(_ticketsCounter.current()); 
+
+        return true;
     }
 
     /// @notice Generate rand index for the NFTid, mint NFT and remove it from array 
