@@ -52,11 +52,22 @@ describe("ShuffleOne", function() {
       const participant = await raffle.participants(await ethers.provider.getSigner().getAddress());
       expect(participant.minted).to.equal(true);
     });
+
+    it("Can't mint with no ticket", async() => {
+      await expect(raffle.mint()).to.be.revertedWith("Address does not own a ticket");
+    });
+
+    it("Cant't mint multiple time", async() => {
+      const ticket = await raffle.buyTicket();
+      await ticket.wait();
+
+      const mint = await raffle.mint();
+      await mint.wait();
+
+      await expect(raffle.mint()).to.be.revertedWith("Already minted");
+    });
   });
 
-  it("Can't mint with no ticket", async() => {
-    await expect(raffle.mint()).to.be.revertedWith("Address does not own a ticket");
-  });
 })
 
 async function createWallets(amount) {
