@@ -73,6 +73,7 @@ contract ShuffleOne is ERC721{
         _mint(msg.sender, NFTsID[randomIndex]);
         removeIndexFromArray(randomIndex);
 
+        participants[msg.sender].randomIdex = randomIndex;
         participants[msg.sender].minted = true;
     }
 
