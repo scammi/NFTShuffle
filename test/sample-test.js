@@ -1,40 +1,44 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-describe("Greeter", function () {
-  it("Should return the new greeting once it's changed", async function () {
-    const Greeter = await ethers.getContractFactory("Greeter");
-    const greeter = await Greeter.deploy("Hello, world!");
-    await greeter.deployed();
+// describe("Greeter", function () {
+//   it("Should return the new greeting once it's changed", async function () {
+//     const Greeter = await ethers.getContractFactory("Greeter");
+//     const greeter = await Greeter.deploy("Hello, world!");
+//     await greeter.deployed();
 
-    expect(await greeter.greet()).to.equal("Hello, world!");
+//     expect(await greeter.greet()).to.equal("Hello, world!");
 
-    const setGreetingTx = await greeter.setGreeting("Hola, mundo!");
+//     const setGreetingTx = await greeter.setGreeting("Hola, mundo!");
 
-    // wait until the transaction is mined
-    await setGreetingTx.wait();
+//     // wait until the transaction is mined
+//     await setGreetingTx.wait();
 
-    expect(await greeter.greet()).to.equal("Hola, mundo!");
-  });
-});
+//     expect(await greeter.greet()).to.equal("Hola, mundo!");
+//   });
+// });
 
 describe("ShuffleOne", function() {
-  it("should deploy the contract and initialize the raffle", async function() {
+  let raffle;
+
+  beforeEach(async() => {
     const Raffle = await ethers.getContractFactory("ShuffleOne");
-    const raffle = await Raffle.deploy();
-    const deployed = await raffle.deployed();
+    raffle = await Raffle.deploy();
+    await raffle.deployed();
 
+  });
 
-    // console.log(ethers.provider.getSigner())
-    const ticket = await raffle.buyTicket()
+  it("Should buy a ticket", async function() {
 
+    const ticket = await raffle.buyTicket();
+    await ticket.wait();
 
-    // const mint = await raffle.mint()
+    const participant = await raffle.participants(await ethers.provider.getSigner().getAddress());
+    expect(participant.ownTickets).to.equal(1);
+  })
 
-    // const participants = await raffle.participants(ethers.getSigner().address)
-
-    // console.log(mint)
-    console.log(ticket)
-    // console.log(ethers.getSigner())
+  it("Cannot buy more than maximum per address", async ()=> {
+    await raffle.buyTicket();
+    await expect(raffle.buyTicket()).to.be.revertedWith("Address owns ticket");
   })
 })
