@@ -28,7 +28,7 @@ describe("ShuffleOne", function() {
     await expect(raffle.buyTicket()).to.be.revertedWith("Address owns ticket");
   });
 
-  it("Revert when buying more than AVAILABLE_SUPPLY", async() => {
+  it("Revert when buying more than the available supply", async() => {
     const available_supply = await raffle.AVAILABLE_SUPPLY();
     
     const accounts = await createWallets(available_supply.toNumber());
