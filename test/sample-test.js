@@ -51,9 +51,12 @@ describe("ShuffleOne", function() {
 
       const participant = await raffle.participants(await ethers.provider.getSigner().getAddress());
       expect(participant.minted).to.equal(true);
-    })
+    });
   });
 
+  it("Can't mint with no ticket", async() => {
+    await expect(raffle.mint()).to.be.revertedWith("Address does not own a ticket");
+  });
 })
 
 async function createWallets(amount) {
