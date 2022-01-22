@@ -79,15 +79,15 @@ describe("ShuffleOne", function() {
       const accounts = await createWallets(5);
 
       await Promise.all(accounts.map(acc => raffle.connect(acc).buyTicket()));
+      
+      // available supply less one since contract index starts at 0
+      for(let i = AVAILABLE_SUPPLY.toNumber() - 1; i > 0; i--) {
 
-      for(let i = AVAILABLE_SUPPLY.toNumber(); i > 0; i--) {
-
-        const mint = await raffle.connect(accounts[i- 1]).mint();
+        const mint = await raffle.connect(accounts[i]).mint();
         await mint.wait();
 
-        expect(await raffle.getNFTsIdLength()).to.be.equal(i-1);
+        expect(await raffle.getNFTsIdLength()).to.be.equal(i);
       }
-
     });
 
   });
