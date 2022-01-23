@@ -95,12 +95,14 @@ describe("ShuffleOne", function() {
       await Promise.all(accounts.map(acc => raffle.connect(acc).buyTicket()));
       
       // available supply less one since contract index starts at 0
-      for(let i = AVAILABLE_SUPPLY.toNumber() - 1; i > 0; i--) {
+      for(let i = AVAILABLE_SUPPLY.toNumber()-1; i >= 0; i--) {
 
         const mint = await raffle.connect(accounts[i]).mint();
         await mint.wait();
-
-        // console.log(await raffle.participants(accounts[i].getAddress()))
+        
+        // console.log(await raffle.participants(accounts[i].getAddress()));
+        // console.log(await raffle.getNFTsIdLength());
+        
         expect(await raffle.getNFTsIdLength()).to.be.equal(i);
       }
     });
