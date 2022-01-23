@@ -39,6 +39,16 @@ describe("ShuffleOne", function() {
 
       await expect(raffle.buyTicket()).to.be.revertedWith("All tickets sold");
     });
+
+    it("Gets tickets sold", async() => {
+      const accounts = await createWallets(5);
+
+      for(let i = 0; i < AVAILABLE_SUPPLY.toNumber(); i++) { 
+        await raffle.connect(accounts[i]).buyTicket();
+
+        expect(await raffle.geSoldTickets()).to.be.equal(i +1);
+      }
+    });
   });
 
   describe("Mint token", function() {

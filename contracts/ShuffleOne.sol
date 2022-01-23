@@ -97,6 +97,10 @@ contract ShuffleOne is ERC721{
         return NFTsId.length;
     }
 
+    function geSoldTickets() public view returns (uint256) {
+        return _soldTicketsCounter.current();
+    }
+
     function _baseURI() internal view override virtual returns (string memory) {
         return "https://ipfs.io/ipfs/QmQxDjEhnYP6QAtLRyLV9N7dn1kDigz7iWnx5psmyXqy35/";
     }
