@@ -3,7 +3,7 @@ const { ethers } = require("hardhat");
 
 describe("ShuffleOne", function() {
   let raffle, AVAILABLE_SUPPLY;
-
+  
   beforeEach(async() => {
     const Raffle = await ethers.getContractFactory("ShuffleOne");
     raffle = await Raffle.deploy(5);
@@ -43,7 +43,18 @@ describe("ShuffleOne", function() {
 
   describe("Mint token", function() {
 
+    it("Should revert on mint if not all tokens have been sold", async() => {
+      const ticket = await raffle.buyTicket();
+      await ticket.wait();
+
+      await expect(raffle.mint()).to.be.revertedWith("Raffle still open")
+    });
+    
     it("Mints single token", async() => {
+
+      const accounts = await createWallets(4);
+      await Promise.all(accounts.map(acc => raffle.connect(acc).buyTicket()));
+
       const ticket = await raffle.buyTicket();
       await ticket.wait();
 
@@ -58,7 +69,10 @@ describe("ShuffleOne", function() {
       await expect(raffle.mint()).to.be.revertedWith("Address does not own a ticket");
     });
 
-    it("Cant't mint multiple time", async() => {
+    it("Cant't mint more than allow per address", async() => {
+      const accounts = await createWallets(4);
+      await Promise.all(accounts.map(acc => raffle.connect(acc).buyTicket()));
+
       const ticket = await raffle.buyTicket();
       await ticket.wait();
 

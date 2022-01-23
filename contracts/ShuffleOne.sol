@@ -66,7 +66,7 @@ contract ShuffleOne is ERC721{
     function mint() public {
         require(participants[msg.sender].ownedTickets > 0, "Address does not own a ticket");
         require(participants[msg.sender].minted < MAX_PER_ADDRESS, "Max allow per address minted");
-        //@todo require(timerDone & allMinted)
+        require(_soldTicketsCounter.current() == AVAILABLE_SUPPLY, "Raffle still open");
 
         uint256 randomIndex = getRandmonIndex();
         uint256 randomNFTsId = NFTsId[randomIndex];
