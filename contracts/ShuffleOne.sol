@@ -36,7 +36,7 @@ contract ShuffleOne is ERC721{
     /// @notice Keep track of participants 
     mapping (address => Participant) public participants;
     /// @notice Keeps track of sold tickets 
-    Counters.Counter internal _ticketsCounter;
+    Counters.Counter internal _soldTicketsCounter;
 
     /// ============ Constructor ============
 
@@ -51,13 +51,13 @@ contract ShuffleOne is ERC721{
 
     /// @notice Enters raffle 
     function buyTicket() public returns (bool){
-        require(_ticketsCounter.current() < AVAILABLE_SUPPLY, "All tickets sold");
+        require(_soldTicketsCounter.current() < AVAILABLE_SUPPLY, "All tickets sold");
         require(participants[msg.sender].ownedTickets < MAX_PER_ADDRESS, "Address owns ticket");
 
         participants[msg.sender].ownedTickets++;
-        _ticketsCounter.increment();
+        _soldTicketsCounter.increment();
 
-        NFTsId.push(_ticketsCounter.current()); 
+        NFTsId.push(_soldTicketsCounter.current()); 
 
         return true;
     }
