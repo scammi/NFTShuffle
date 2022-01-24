@@ -151,6 +151,27 @@ describe("ShuffleOne", function() {
       expect(duplicatesNFTsIds).be.be.empty;
     });
   });
+
+  describe("Payable", function() {
+    it("Should withdraw", async() => {
+      const accounts = await createWallets(AVAILABLE_SUPPLY);
+      await Promise.all(accounts.map(acc => raffle.connect(acc).buyTicket(ticketPaymentOver)));
+      await Promise.all(accounts.map(acc => raffle.connect(acc).mint()));
+
+      let raffleBalance = await ethers.provider.getBalance(raffle.address);
+      let parsedRaffleBalance = ethers.utils.formatEther(raffleBalance.toString());
+      
+      expect(parsedRaffleBalance).to.equal("0.5");
+
+      const withdraw = await raffle.withdrawRaffleProceeds();
+      await withdraw.wait();
+
+      raffleBalance = await ethers.provider.getBalance(raffle.address);
+      parsedRaffleBalance = ethers.utils.formatEther(raffleBalance.toString());
+
+      expect(parsedRaffleBalance).to.equal("0.0");
+    })
+  });
 })
 
 async function createWallets(amount) {

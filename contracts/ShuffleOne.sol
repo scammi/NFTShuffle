@@ -4,11 +4,12 @@ pragma solidity ^0.8.0;
 /// ============ Imports ============
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol"; //OZ: ERC721
+import "@openzeppelin/contracts/access/Ownable.sol"; // OZ: Ownership
 import "@openzeppelin/contracts/utils/Counters.sol"; //OZ: Counter
 
 /// @title ShuffleOne
 /// @notice ERC721 randmoized distribution
-contract ShuffleOne is ERC721{
+contract ShuffleOne is ERC721, Ownable{
     using Counters for Counters.Counter;
 
     /// ============ Structs ============
@@ -37,6 +38,9 @@ contract ShuffleOne is ERC721{
     uint256 public entropy = block.timestamp;
     /// @notice Keep track of participants 
     mapping (address => Participant) public participants;
+    /// @notice Owner has claimed raffle proceeds
+    bool public proceedsClaimed = false;
+
     /// @notice Keeps track of sold tickets 
     Counters.Counter internal _soldTicketsCounter;
 
@@ -104,6 +108,21 @@ contract ShuffleOne is ERC721{
 
     function geSoldTickets() public view returns (uint256) {
         return _soldTicketsCounter.current();
+    }
+
+    /// @notice Allows contract owner to withdraw proceeds of tickets
+    function withdrawRaffleProceeds() external onlyOwner {
+        // Ensure raffle has ended
+        require(_soldTicketsCounter.current() == AVAILABLE_SUPPLY, "Raffle still open");
+        // Ensure proceeds have not already been claimed
+        require(!proceedsClaimed, "Proceeds already claimed");
+
+        // Toggle proceeds being claimed
+        proceedsClaimed = true;
+
+        // Pay owner proceeds
+        (bool sent, ) = payable(msg.sender).call{value: address(this).balance}(""); 
+        require(sent, "Unsuccessful in payout");
     }
 
     function _baseURI() internal view override virtual returns (string memory) {
