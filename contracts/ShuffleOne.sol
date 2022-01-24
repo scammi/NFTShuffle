@@ -24,6 +24,8 @@ contract ShuffleOne is ERC721{
 
     /// @notice Avalible NFTs to be minted
     uint256 public immutable AVAILABLE_SUPPLY;
+    /// @notice minimum cost for ticket
+    uint256 public immutable MINT_COST;
     /// @notice Maximum tickets per address
     uint256 public immutable MAX_PER_ADDRESS = 1;
 
@@ -41,18 +43,21 @@ contract ShuffleOne is ERC721{
     /// ============ Constructor ============
 
     constructor(
-        uint256 _AVAILABLE_SUPPLY
+        uint256 _AVAILABLE_SUPPLY,
+        uint256 _MINT_COST
     ) 
     ERC721("Random NFT", "rNFT") {
         AVAILABLE_SUPPLY = _AVAILABLE_SUPPLY;
+        MINT_COST = _MINT_COST;
     }
 
     /// ============ Functions ============
 
     /// @notice Enters raffle 
-    function buyTicket() public returns (bool){
+    function buyTicket() external payable returns (bool){
         require(_soldTicketsCounter.current() < AVAILABLE_SUPPLY, "All tickets sold");
         require(participants[msg.sender].ownedTickets < MAX_PER_ADDRESS, "Address owns ticket");
+        require(msg.value >= MINT_COST, "Incorrect payment");
 
         participants[msg.sender].ownedTickets++;
         _soldTicketsCounter.increment();

@@ -2,20 +2,27 @@ const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
 describe("ShuffleOne", function() {
+  const ticketPaymentOver = {
+    value: ethers.utils.parseEther("0.1")
+  };
+
   let raffle, AVAILABLE_SUPPLY;
   
   beforeEach(async() => {
+
+     console.log('balance', await ethers.provider.getSigner().getBalance())
+
     const Raffle = await ethers.getContractFactory("ShuffleOne");
-    raffle = await Raffle.deploy(5);
+    raffle = await Raffle.deploy(5, ethers.utils.parseEther("0.1"));
     await raffle.deployed();
 
-   AVAILABLE_SUPPLY = await raffle.AVAILABLE_SUPPLY(); 
+    AVAILABLE_SUPPLY = await raffle.AVAILABLE_SUPPLY(); 
   });
 
   describe("BuyTicket", function() {
 
     it("Should buy a ticket", async() => {
-      const ticket = await raffle.buyTicket();
+      const ticket = await raffle.buyTicket(ticketPaymentOver);
       await ticket.wait();
   
       const participant = await raffle.participants(await ethers.provider.getSigner().getAddress());
@@ -26,25 +33,25 @@ describe("ShuffleOne", function() {
       const max_per_address = await raffle.MAX_PER_ADDRESS();
   
       for(let i = 0; i < max_per_address.toNumber(); i++ ) {
-        await raffle.buyTicket();
+        await raffle.buyTicket(ticketPaymentOver);
       }
-      await expect(raffle.buyTicket()).to.be.revertedWith("Address owns ticket");
+      await expect(raffle.buyTicket(ticketPaymentOver)).to.be.revertedWith("Address owns ticket");
     });
   
     it("Revert when buying more than the available supply", async() => {
       
       const accounts = await createWallets(AVAILABLE_SUPPLY);
   
-      await Promise.all(accounts.map(acc => raffle.connect(acc).buyTicket()))
+      await Promise.all(accounts.map(acc => raffle.connect(acc).buyTicket(ticketPaymentOver)))
 
-      await expect(raffle.buyTicket()).to.be.revertedWith("All tickets sold");
+      await expect(raffle.buyTicket(ticketPaymentOver)).to.be.revertedWith("All tickets sold");
     });
 
     it("Gets tickets sold", async() => {
       const accounts = await createWallets(5);
 
       for(let i = 0; i < AVAILABLE_SUPPLY.toNumber(); i++) { 
-        await raffle.connect(accounts[i]).buyTicket();
+        await raffle.connect(accounts[i]).buyTicket(ticketPaymentOver);
 
         expect(await raffle.geSoldTickets()).to.be.equal(i +1);
       }
@@ -54,7 +61,7 @@ describe("ShuffleOne", function() {
   describe("Mint token", function() {
 
     it("Should revert on mint if not all tokens have been sold", async() => {
-      const ticket = await raffle.buyTicket();
+      const ticket = await raffle.buyTicket(ticketPaymentOver);
       await ticket.wait();
 
       await expect(raffle.mint()).to.be.revertedWith("Raffle still open")
@@ -63,9 +70,9 @@ describe("ShuffleOne", function() {
     it("Mints single token", async() => {
 
       const accounts = await createWallets(4);
-      await Promise.all(accounts.map(acc => raffle.connect(acc).buyTicket()));
+      await Promise.all(accounts.map(acc => raffle.connect(acc).buyTicket(ticketPaymentOver)));
 
-      const ticket = await raffle.buyTicket();
+      const ticket = await raffle.buyTicket(ticketPaymentOver);
       await ticket.wait();
 
       const mint = await raffle.mint();
@@ -81,9 +88,9 @@ describe("ShuffleOne", function() {
 
     it("Cant't mint more than allow per address", async() => {
       const accounts = await createWallets(4);
-      await Promise.all(accounts.map(acc => raffle.connect(acc).buyTicket()));
+      await Promise.all(accounts.map(acc => raffle.connect(acc).buyTicket(ticketPaymentOver)));
 
-      const ticket = await raffle.buyTicket();
+      const ticket = await raffle.buyTicket(ticketPaymentOver);
       await ticket.wait();
 
       const mint = await raffle.mint();
@@ -95,14 +102,14 @@ describe("ShuffleOne", function() {
     it("NFTsIds to be minted should have a length equal to the numbers of tickets bought", async() => {
       const accounts = await createWallets(AVAILABLE_SUPPLY);
 
-      await Promise.all(accounts.map(acc => raffle.connect(acc).buyTicket()));
+      await Promise.all(accounts.map(acc => raffle.connect(acc).buyTicket(ticketPaymentOver)));
       expect(await raffle.getNFTsIdLength()).to.equal(AVAILABLE_SUPPLY);
     });
 
     it("NFTsId length should decrease on every mint", async() => {
       const accounts = await createWallets(5);
 
-      await Promise.all(accounts.map(acc => raffle.connect(acc).buyTicket()));
+      await Promise.all(accounts.map(acc => raffle.connect(acc).buyTicket(ticketPaymentOver)));
       
       // available supply less one since contract index starts at 0
       for(let i = AVAILABLE_SUPPLY.toNumber()-1; i >= 0; i--) {
@@ -119,7 +126,7 @@ describe("ShuffleOne", function() {
 
     it("has no repeated IDs for NFTs", async() => {
       const accounts = await createWallets(AVAILABLE_SUPPLY);
-      await Promise.all(accounts.map(acc => raffle.connect(acc).buyTicket()));
+      await Promise.all(accounts.map(acc => raffle.connect(acc).buyTicket(ticketPaymentOver)));
 
       await Promise.all(accounts.map(acc => raffle.connect(acc).mint()))
 
@@ -156,7 +163,7 @@ async function createWallets(amount) {
     const w = ethers.Wallet.fromMnemonic(mnemonic.phrase, path).connect(ethers.provider)
     await accounts[7].sendTransaction({
       to: w.address,
-      value: ethers.utils.parseEther('0.1')
+      value: ethers.utils.parseEther('0.2')
     })
     wallets.push(w)
   }
