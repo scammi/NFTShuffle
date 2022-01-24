@@ -57,7 +57,7 @@ contract ShuffleOne is ERC721{
     function buyTicket() external payable returns (bool){
         require(_soldTicketsCounter.current() < AVAILABLE_SUPPLY, "All tickets sold");
         require(participants[msg.sender].ownedTickets < MAX_PER_ADDRESS, "Address owns ticket");
-        require(msg.value >= MINT_COST, "Incorrect payment");
+        require(msg.value >= MINT_COST, "Insufficient payment");
 
         participants[msg.sender].ownedTickets++;
         _soldTicketsCounter.increment();

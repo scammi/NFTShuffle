@@ -9,9 +9,6 @@ describe("ShuffleOne", function() {
   let raffle, AVAILABLE_SUPPLY;
   
   beforeEach(async() => {
-
-     console.log('balance', await ethers.provider.getSigner().getBalance())
-
     const Raffle = await ethers.getContractFactory("ShuffleOne");
     raffle = await Raffle.deploy(5, ethers.utils.parseEther("0.1"));
     await raffle.deployed();
@@ -27,6 +24,12 @@ describe("ShuffleOne", function() {
   
       const participant = await raffle.participants(await ethers.provider.getSigner().getAddress());
       expect(participant.ownedTickets).to.equal(1);
+    });
+    
+    it("should revert on incorrect payment", async() => {
+      const insufficientFee = {value:ethers.utils.parseEther('.01')};
+
+      await expect(raffle.buyTicket(insufficientFee)).to.be.revertedWith("Insufficient payment");
     });
   
     it("Cannot buy more than maximum per address", async() => {
