@@ -116,6 +116,30 @@ describe("ShuffleOne", function() {
         expect(await raffle.getNFTsIdLength()).to.be.equal(i);
       }
     });
+
+    it("has no repeated IDs for NFTs", async() => {
+      const accounts = await createWallets(AVAILABLE_SUPPLY);
+      await Promise.all(accounts.map(acc => raffle.connect(acc).buyTicket()));
+
+      await Promise.all(accounts.map(acc => raffle.connect(acc).mint()))
+
+      let participants = await Promise.all(accounts.map(acc=>raffle.participants(acc.getAddress())))
+
+      let uniqueNFTsIds = [];
+      let duplicatesNFTsIds = [];
+
+      participants.forEach((participant) => {
+        const NFTId = participant.tokenId.toNumber();
+
+        if(uniqueNFTsIds.includes(NFTId)) {
+          duplicatesNFTsIds.push(NFTId);
+        } else {
+          uniqueNFTsIds.push(NFTId);
+        }
+      });
+
+      expect(duplicatesNFTsIds).be.be.empty;
+    });
   });
 })
 
