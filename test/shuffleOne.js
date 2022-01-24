@@ -89,7 +89,7 @@ describe("ShuffleOne", function() {
       await expect(raffle.mint()).to.be.revertedWith("Address does not own a ticket");
     });
 
-    it("Cant't mint more than allow per address", async() => {
+    it("Ticket owned by participant decreases on mint", async() => {
       const accounts = await createWallets(4);
       await Promise.all(accounts.map(acc => raffle.connect(acc).buyTicket(ticketPaymentOver)));
 
@@ -99,7 +99,9 @@ describe("ShuffleOne", function() {
       const mint = await raffle.mint();
       await mint.wait();
 
-      await expect(raffle.mint()).to.be.revertedWith("Max allow per address minted");
+      await expect(raffle.mint()).to.be.revertedWith("Address does not own a ticket");
+      const participant = await raffle.participants(await ethers.provider.getSigner().getAddress());
+      expect(participant.minted).to.equal(1);
     });
 
     it("NFTsIds to be minted should have a length equal to the numbers of tickets bought", async() => {
