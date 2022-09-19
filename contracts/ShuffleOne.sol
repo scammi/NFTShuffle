@@ -144,6 +144,8 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
         require(participants[msg.sender].minted < MAX_PER_ADDRESS, "Max allow per address minted");
         // Ensure raffle is closed
         require(_soldTicketsCounter.current() == AVAILABLE_SUPPLY, "Raffle still open");
+        // Ensure entropy is set
+        require(entropy != 0, "entropy is not set");
 
         // Pick index from NFTsIds
         uint256 randomIndex = getRandmonIndex();
