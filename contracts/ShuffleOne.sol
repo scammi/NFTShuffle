@@ -7,10 +7,13 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol"; //OZ: ERC721
 import "@openzeppelin/contracts/access/Ownable.sol"; // OZ: Ownership
 import "@openzeppelin/contracts/utils/Counters.sol"; //OZ: Counter
 
+import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
+
 /// @title ShuffleOne
 /// @author Santiago Cammi (scammi)
 /// @notice ERC721 randmoized distribution
-contract ShuffleOne is ERC721, Ownable{
+contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     using Counters for Counters.Counter;
 
     /// ============ Structs ============
@@ -43,12 +46,22 @@ contract ShuffleOne is ERC721, Ownable{
     /// @notice Array of NFTs ID to be minted 
     uint256[] public NFTsId;
     /// @notice Source of entropy
-    uint256 public entropy = block.timestamp;
+    uint256 public entropy;
     /// @notice Owner has claimed raffle proceeds
     bool public proceedsClaimed = false;
 
     /// @notice Keeps track of sold tickets 
     Counters.Counter internal _soldTicketsCounter;
+
+
+    // VRF v2
+
+    bytes32 internal immutable _keyHash;
+    uint64 internal immutable _subId;
+
+    uint16 public constant MINIMUM_CONFIRMATIONS = 3;
+    uint32 public constant CALLBACK_GAS_LIMIT = 1_200_000;
+    uint32 public constant WORDS_AMOUNT = 10;
 
     /// ============ Events ============
 
@@ -68,18 +81,26 @@ contract ShuffleOne is ERC721, Ownable{
     /// @param _AVAILABLE_SUPPLY total NFTs to sell
     /// @param _MINT_COST in wei per ticket
     constructor(
+        address vrfCoordinator,
+        bytes32 keyHash,
+        uint64 subId,
         uint256 _AVAILABLE_SUPPLY,
         uint256 _MINT_COST
-    ) 
-    ERC721("Random NFT", "rNFT") {
+    )
+        ERC721("Random NFT", "rNFT")
+        VRFConsumerBaseV2(vrfCoordinator)
+    {
         AVAILABLE_SUPPLY = _AVAILABLE_SUPPLY;
         MINT_COST = _MINT_COST;
+
+        _keyHash = keyHash;
+        _subId = subId;
     }
 
     /// ============ Functions ============
 
     /// @notice Enters raffle 
-    function buyTicket() external payable{
+    function buyTicket() external payable {
         //Ensure there are tickets to be sell
         require(_soldTicketsCounter.current() < AVAILABLE_SUPPLY, "All tickets sold");
         // Ensure participant owns no more than allow
