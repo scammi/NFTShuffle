@@ -121,6 +121,21 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
         emit TicketSold(msg.sender, _soldTicketsCounter.current());
     }
 
+    function requestRandomness() external {
+        uint256 requestId = VRFCoordinatorV2Interface(vrfCoordinator).requestRandomWords(
+            _keyHash, _subId, MINIMUM_CONFIRMATIONS, CALLBACK_GAS_LIMIT, WORDS_AMOUNT
+        );
+
+    }
+
+    function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords) internal override {
+        // verify requestId
+
+        // set entropy
+        entropy = randomWords[0];
+    }
+
+
     /// @notice Generate rand index for the NFTid, mint NFT and remove it from array 
     function mint() public {
         // Ensure participant owns ticket
