@@ -12,7 +12,7 @@ import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 
 /// @title ShuffleOne
 /// @author Santiago Cammi (scammi)
-/// @notice ERC721 randmoized distribution
+/// @notice ERC721 randomized distribution
 contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     using Counters for Counters.Counter;
 
@@ -108,6 +108,7 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
         // Ensure sufficient raffle ticket payment
         require(msg.value >= MINT_COST, "Insufficient payment");
 
+
         // Participant gets ticket
         participants[msg.sender].ownedTickets++;
         
@@ -125,7 +126,6 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
         uint256 requestId = VRFCoordinatorV2Interface(vrfCoordinator).requestRandomWords(
             _keyHash, _subId, MINIMUM_CONFIRMATIONS, CALLBACK_GAS_LIMIT, WORDS_AMOUNT
         );
-
     }
 
     function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords) internal override {
@@ -148,7 +148,7 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
         require(entropy != 0, "entropy is not set");
 
         // Pick index from NFTsIds
-        uint256 randomIndex = getRandmonIndex();
+        uint256 randomIndex = getRandomIndex();
         
         // Get random ID value from NFTsIds
         uint256 randomNFTsId = NFTsId[randomIndex];
@@ -158,7 +158,6 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
 
         // Remove minted ID from NFTsIds array
         removeIndexFromArray(randomIndex);
-
         // Update participants data
         participants[msg.sender].randomIndex = randomIndex;
         participants[msg.sender].tokenId = randomNFTsId;
@@ -170,7 +169,7 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     }
 
     /// @notice Get a random index from the NFTsId array 
-    function getRandmonIndex() internal view returns (uint) {
+    function getRandomIndex() internal view returns (uint) {
         // Picks a random index between 0 and NFTsIDs length
         return uint(keccak256(abi.encodePacked(entropy))) % NFTsId.length;
     }
