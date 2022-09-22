@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/scammi/NFTShuffle#readme",
   "dependencies": {
+    "@appliedblockchain/chainlink-contracts": "^0.0.4",
+    "@chainlink/contracts": "^0.4.1",
     "@openzeppelin/contracts": "^4.4.2"
   },
   "devDependencies": {
