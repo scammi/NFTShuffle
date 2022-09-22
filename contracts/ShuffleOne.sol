@@ -58,6 +58,8 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
 
     bytes32 internal immutable _keyHash;
     uint64 internal immutable _subId;
+    
+    uint256 internal requestId;
 
     uint16 public constant MINIMUM_CONFIRMATIONS = 3;
     uint32 public constant CALLBACK_GAS_LIMIT = 1_200_000;
@@ -123,14 +125,16 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     }
 
     function requestRandomness() external {
-        uint256 requestId = VRFCoordinatorV2Interface(vrfCoordinator).requestRandomWords(
+        require(requestId == 0, 'random already requested');
+        requestId = VRFCoordinatorV2Interface(vrfCoordinator).requestRandomWords(
             _keyHash, _subId, MINIMUM_CONFIRMATIONS, CALLBACK_GAS_LIMIT, WORDS_AMOUNT
         );
     }
 
-    function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords) internal override {
+    function fulfillRandomWords(uint256 reqId, uint256[] memory randomWords) internal override {
         // verify requestId
-
+        require(requestId == reqId, "requestId do not match");
+        require(entropy == 0, "entropy already set");
         // set entropy
         entropy = randomWords[0];
     }
