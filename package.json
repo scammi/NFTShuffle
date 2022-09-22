@@ -21,7 +21,7 @@
     "@openzeppelin/contracts": "^4.4.2"
   },
   "devDependencies": {
-    "@nomiclabs/hardhat-ethers": "^2.0.4",
+    "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers",
     "@nomiclabs/hardhat-waffle": "^2.0.2",
     "chai": "^4.3.6",
     "chai-ethers": "^0.0.1",
@@ -29,7 +29,6 @@
     "ethers": "^5.7.1",
     "hardhat": "^2.8.3",
     "hardhat-deploy": "^0.11.15",
-    "hardhat-deploy-ethers": "^0.3.0-beta.13",
     "mocha": "^10.0.0"
   }
 }

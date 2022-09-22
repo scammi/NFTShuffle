@@ -1,5 +1,5 @@
 const { expect } = require("chai");
-const { ethers } = require("hardhat");
+const { ethers, deployments } = require("hardhat");
 
 describe("ShuffleOne", function() {
   const ticketPaymentOver = {
@@ -9,10 +9,9 @@ describe("ShuffleOne", function() {
   let raffle, AVAILABLE_SUPPLY;
   
   beforeEach(async() => {
-    const Raffle = await ethers.getContractFactory("ShuffleOne");
-    raffle = await Raffle.deploy(5, ethers.utils.parseEther("0.1"));
-    await raffle.deployed();
+    await deployments.fixture(["ShuffleOne"]);
 
+    raffle = await ethers.getContract("ShuffleOne");
     AVAILABLE_SUPPLY = await raffle.AVAILABLE_SUPPLY(); 
   });
 
