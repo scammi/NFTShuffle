@@ -175,7 +175,6 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     /// @notice Get a random index from the NFTsId array 
     function getRandomIndex() internal view returns (uint) {
         // Picks a random index between 0 and NFTsIDs length
-        // return uint(keccak256(abi.encodePacked(entropy))) % NFTsId.length;
         return entropy % NFTsId.length;
     }
 
