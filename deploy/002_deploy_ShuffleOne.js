@@ -1,13 +1,43 @@
+const {
+  networkConfig,
+  developmentChains,
+  VERIFICATION_BLOCK_CONFIRMATIONS,
+} = require("../helper-hardhat-config")
+
 
 module.exports = async function (hre) {
-  const {deployments, getNamedAccounts, ethers} = hre;
+  const {deployments, getNamedAccounts, ethers, network} = hre;
   const {deploy} = deployments;
 
   const {deployer} = await getNamedAccounts();
 
+  const chainId = network.config.chainId
+
+  VRFCoordinatorV2MockDeployment = await deployments.get('VRFCoordinatorV2Mock')
+  vrfCoordinatorAddress = VRFCoordinatorV2MockDeployment.address
+  VRFCoordinatorV2Mock = await ethers.getContractAt(VRFCoordinatorV2MockDeployment.abi, VRFCoordinatorV2MockDeployment.address)
+
+  if (chainId == 31337) {
+    const fundAmount = networkConfig[chainId]["fundAmount"]
+    const transaction = await VRFCoordinatorV2Mock.createSubscription()
+    const transactionReceipt = await transaction.wait(1)
+    subscriptionId = ethers.BigNumber.from(transactionReceipt.events[0].topics[1])
+    await VRFCoordinatorV2Mock.fundSubscription(subscriptionId, fundAmount)
+  } else {
+    // 2125 
+    subscriptionId = process.env.VRF_SUBSCRIPTION_ID
+    vrfCoordinatorAddress = networkConfig[chainId]["vrfCoordinator"]
+  }
+
   await deploy('ShuffleOne', {
     from: deployer,
-    args: [5, ethers.utils.parseEther("0.1")],
+    args: [
+      vrfCoordinatorAddress,
+      networkConfig[chainId].keyHash,
+      subscriptionId,
+      5,
+      ethers.utils.parseEther("0.1")
+    ],
     log: true,
   });
 };
