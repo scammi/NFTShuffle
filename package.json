@@ -19,16 +19,17 @@
   "homepage": "https://github.com/scammi/NFTShuffle#readme",
   "dependencies": {
     "@chainlink/contracts": "^0.4.1",
-    "@openzeppelin/contracts": "^4.4.2"
+    "@openzeppelin/contracts": "^4.4.2",
+    "@chainlink/token": "^1.1.0"
   },
   "devDependencies": {
-    "@nomiclabs/hardhat-ethers": "^2.1.1",
+    "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers",
     "@nomiclabs/hardhat-waffle": "^2.0.2",
     "chai": "^4.3.6",
     "chai-ethers": "^0.0.1",
     "ethereum-waffle": "^3.4.0",
     "ethers": "^5.7.1",
-    "hardhat": "^2.8.3",
+    "hardhat": "^2.11.2",
     "hardhat-deploy": "^0.11.15",
     "mocha": "^10.0.0"
   }
