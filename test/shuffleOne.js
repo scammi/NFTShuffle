@@ -2,12 +2,15 @@ const { expect } = require("chai");
 const { ethers, deployments } = require("hardhat");
 
 describe("ShuffleOne", function() {
-  const ticketPaymentOver = {
-    value: ethers.utils.parseEther("0.1")
-  };
 
   let raffle, AVAILABLE_SUPPLY;
   
+  let MINT_COST = ethers.utils.parseEther("0.1")
+
+  const ticketPaymentOver = {
+    value: MINT_COST
+  };
+
   beforeEach(async() => {
     await deployments.fixture(["ShuffleOne"]);
 
@@ -26,9 +29,11 @@ describe("ShuffleOne", function() {
     });
     
     it("should revert on incorrect payment", async() => {
-      const insufficientFee = {value:ethers.utils.parseEther('.01')};
+      const insufficientFee = "0.001";
 
-      await expect(raffle.buyTicket(insufficientFee)).to.be.revertedWith("Insufficient payment");
+      await expect(raffle.buyTicket(
+        {value: ethers.utils.parseEther(insufficientFee)}
+      )).to.be.revertedWith("Insufficient payment");
     });
   
     it("Cannot buy more than maximum per address", async() => {
@@ -162,7 +167,7 @@ describe("ShuffleOne", function() {
       let raffleBalance = await ethers.provider.getBalance(raffle.address);
       let parsedRaffleBalance = ethers.utils.formatEther(raffleBalance.toString());
       
-      expect(parsedRaffleBalance).to.equal("0.5");
+      expect(parsedRaffleBalance).to.equal(MINT_COST * 5);
 
       const withdraw = await raffle.withdrawRaffleProceeds();
       await withdraw.wait();
