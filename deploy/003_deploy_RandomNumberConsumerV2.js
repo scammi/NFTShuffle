@@ -5,10 +5,11 @@ const {
   VERIFICATION_BLOCK_CONFIRMATIONS,
 } = require("../helper-hardhat-config")
 
-module.exports = async ({ getNamedAccounts, deployments }) => {
+module.exports = async ({ ethers, getNamedAccounts, deployments, network }) => {
   const { deploy, get, log } = deployments
   const { deployer } = await getNamedAccounts()
   const chainId = network.config.chainId
+
   let vrfCoordinatorAddress
   let subscriptionId
 
