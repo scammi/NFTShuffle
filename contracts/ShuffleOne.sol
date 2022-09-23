@@ -59,7 +59,7 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     bytes32 internal immutable _keyHash;
     uint64 internal immutable _subId;
     
-    uint256 internal requestId;
+    uint256 internal _requestId;
 
     uint16 public constant MINIMUM_CONFIRMATIONS = 3;
     uint32 public constant CALLBACK_GAS_LIMIT = 1_200_000;
@@ -125,15 +125,15 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     }
 
     function requestRandomness() external {
-        require(requestId == 0, 'random already requested');
-        requestId = VRFCoordinatorV2Interface(vrfCoordinator).requestRandomWords(
+        require(_requestId == 0, 'random already requested');
+        _requestId = VRFCoordinatorV2Interface(vrfCoordinator).requestRandomWords(
             _keyHash, _subId, MINIMUM_CONFIRMATIONS, CALLBACK_GAS_LIMIT, WORDS_AMOUNT
         );
     }
 
-    function fulfillRandomWords(uint256 reqId, uint256[] memory randomWords) internal override {
+    function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords) internal override {
         // verify requestId
-        require(requestId == reqId, "requestId do not match");
+        require(_requestId == requestId, "requestId do not match");
         require(entropy == 0, "entropy already set");
         // set entropy
         entropy = randomWords[0];
@@ -175,7 +175,8 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     /// @notice Get a random index from the NFTsId array 
     function getRandomIndex() internal view returns (uint) {
         // Picks a random index between 0 and NFTsIDs length
-        return uint(keccak256(abi.encodePacked(entropy))) % NFTsId.length;
+        // return uint(keccak256(abi.encodePacked(entropy))) % NFTsId.length;
+        return entropy % NFTsId.length;
     }
 
     /// @notice Delete minted id from array, gas efficient, no re-ordering of indexs
