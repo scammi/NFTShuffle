@@ -1,7 +1,6 @@
 const {
   networkConfig,
-  developmentChains,
-  VERIFICATION_BLOCK_CONFIRMATIONS,
+  RAFFLE_FINALIZATION_BLOCKNUMBER
 } = require("../helper-hardhat-config")
 
 
@@ -36,7 +35,8 @@ module.exports = async function (hre) {
       networkConfig[chainId].keyHash,
       subscriptionId,
       5,
-      ethers.utils.parseEther("0.1")
+      ethers.utils.parseEther("0.1"),
+      RAFFLE_FINALIZATION_BLOCKNUMBER // BIDDING_BLOCKS_LENGTH
     ],
     log: true,
   });

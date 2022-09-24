@@ -47,10 +47,12 @@ const networkConfig = {
   
   const developmentChains = ["hardhat", "localhost"]
   const VERIFICATION_BLOCK_CONFIRMATIONS = 6
+  const RAFFLE_FINALIZATION_BLOCKNUMBER = 1000;
   
   module.exports = {
     networkConfig,
     developmentChains,
     VERIFICATION_BLOCK_CONFIRMATIONS,
+    RAFFLE_FINALIZATION_BLOCKNUMBER
   }
   
