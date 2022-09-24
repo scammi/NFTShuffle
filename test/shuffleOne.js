@@ -65,7 +65,7 @@ describe("ShuffleOne", function() {
       }
     });
 
-    it.only("Should disallow buying ticket after block number", async() => {
+    it("Should disallow buying ticket after block number", async() => {
       // get RAFFLE_FINALIZATION_BLOCKNUMBER
       const raffleEndBlock = await raffle.RAFFLE_FINALIZATION_BLOCKNUMBER();
       expect(raffleEndBlock.toNumber()).to.equal(1007);
