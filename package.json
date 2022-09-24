@@ -4,7 +4,7 @@
   "description": "NFTHack 2022: NFT that points to a random number.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "yarn hardhat test --deploy-fixture"
   },
   "repository": {
     "type": "git",

@@ -2,16 +2,21 @@ const { expect } = require("chai");
 const { ethers, deployments } = require("hardhat");
 
 describe("ShuffleOne", function() {
-  const ticketPaymentOver = {
-    value: ethers.utils.parseEther("0.1")
-  };
 
   let raffle, AVAILABLE_SUPPLY;
   
+  let MINT_COST = ethers.utils.parseEther("0.1")
+
+  const ticketPaymentOver = {
+    value: MINT_COST
+  };
+
   beforeEach(async() => {
     await deployments.fixture(["ShuffleOne"]);
 
     raffle = await ethers.getContract("ShuffleOne");
+    vrfCoordinatorV2Mock = await ethers.getContract("VRFCoordinatorV2Mock")
+
     AVAILABLE_SUPPLY = await raffle.AVAILABLE_SUPPLY(); 
   });
 
@@ -26,9 +31,11 @@ describe("ShuffleOne", function() {
     });
     
     it("should revert on incorrect payment", async() => {
-      const insufficientFee = {value:ethers.utils.parseEther('.01')};
+      const insufficientFee = "0.001";
 
-      await expect(raffle.buyTicket(insufficientFee)).to.be.revertedWith("Insufficient payment");
+      await expect(raffle.buyTicket(
+        {value: ethers.utils.parseEther(insufficientFee)}
+      )).to.be.revertedWith("Insufficient payment");
     });
   
     it("Cannot buy more than maximum per address", async() => {
@@ -61,7 +68,6 @@ describe("ShuffleOne", function() {
   });
 
   describe("Mint token", function() {
-
     it("Should revert on mint if not all tokens have been sold", async() => {
       const ticket = await raffle.buyTicket(ticketPaymentOver);
       await ticket.wait();
@@ -70,12 +76,17 @@ describe("ShuffleOne", function() {
     });
     
     it("Mints single token", async() => {
-
       const accounts = await createWallets(4);
       await Promise.all(accounts.map(acc => raffle.connect(acc).buyTicket(ticketPaymentOver)));
 
       const ticket = await raffle.buyTicket(ticketPaymentOver);
       await ticket.wait();
+
+      // request randomness 
+      await (await raffle.requestRandomness()).wait();
+      const requestId  = await raffle.getRequestId();
+      // fulfill request
+      await (await vrfCoordinatorV2Mock.fulfillRandomWords(requestId, raffle.address)).wait()
 
       const mint = await raffle.mint();
       await mint.wait();
@@ -94,6 +105,12 @@ describe("ShuffleOne", function() {
 
       const ticket = await raffle.buyTicket(ticketPaymentOver);
       await ticket.wait();
+
+      // request randomness 
+      await (await raffle.requestRandomness()).wait();
+      const requestId  = await raffle.getRequestId()
+      // fulfill request
+      await (await vrfCoordinatorV2Mock.fulfillRandomWords(requestId, raffle.address)).wait()
 
       const mint = await raffle.mint();
       await mint.wait();
@@ -115,9 +132,14 @@ describe("ShuffleOne", function() {
 
       await Promise.all(accounts.map(acc => raffle.connect(acc).buyTicket(ticketPaymentOver)));
       
+      // request randomness 
+      await (await raffle.requestRandomness()).wait();
+      const requestId  = await raffle.getRequestId()
+      // fulfill request
+      await (await vrfCoordinatorV2Mock.fulfillRandomWords(requestId, raffle.address)).wait()
+
       // available supply less one since contract index starts at 0
       for(let i = AVAILABLE_SUPPLY.toNumber()-1; i >= 0; i--) {
-
         const mint = await raffle.connect(accounts[i]).mint();
         await mint.wait();
         
@@ -132,9 +154,15 @@ describe("ShuffleOne", function() {
       const accounts = await createWallets(AVAILABLE_SUPPLY);
       await Promise.all(accounts.map(acc => raffle.connect(acc).buyTicket(ticketPaymentOver)));
 
-      await Promise.all(accounts.map(acc => raffle.connect(acc).mint()))
+      // request randomness 
+      await (await raffle.requestRandomness()).wait();
+      const requestId  = await raffle.getRequestId()
+      // fulfill request
+      await (await vrfCoordinatorV2Mock.fulfillRandomWords(requestId, raffle.address)).wait()
 
-      let participants = await Promise.all(accounts.map(acc=>raffle.participants(acc.getAddress())))
+      await Promise.all(accounts.map(acc => raffle.connect(acc).mint()));
+
+      let participants = await Promise.all(accounts.map(acc=>raffle.participants(acc.getAddress())));
 
       let uniqueNFTsIds = [];
       let duplicatesNFTsIds = [];
@@ -157,12 +185,19 @@ describe("ShuffleOne", function() {
     it("Should withdraw", async() => {
       const accounts = await createWallets(AVAILABLE_SUPPLY);
       await Promise.all(accounts.map(acc => raffle.connect(acc).buyTicket(ticketPaymentOver)));
+
+      // request randomness 
+      await (await raffle.requestRandomness()).wait();
+      const requestId  = await raffle.getRequestId()
+      // fulfill request
+      await (await vrfCoordinatorV2Mock.fulfillRandomWords(requestId, raffle.address)).wait()
+
       await Promise.all(accounts.map(acc => raffle.connect(acc).mint()));
 
       let raffleBalance = await ethers.provider.getBalance(raffle.address);
-      let parsedRaffleBalance = ethers.utils.formatEther(raffleBalance.toString());
+      // let parsedRaffleBalance = ethers.utils.formatEther(raffleBalance.toString());
       
-      expect(parsedRaffleBalance).to.equal("0.5");
+      expect(raffleBalance.toString()).to.equal(MINT_COST.mul(5));
 
       const withdraw = await raffle.withdrawRaffleProceeds();
       await withdraw.wait();

@@ -7,10 +7,13 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol"; //OZ: ERC721
 import "@openzeppelin/contracts/access/Ownable.sol"; // OZ: Ownership
 import "@openzeppelin/contracts/utils/Counters.sol"; //OZ: Counter
 
+import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
+
 /// @title ShuffleOne
 /// @author Santiago Cammi (scammi)
-/// @notice ERC721 randmoized distribution
-contract ShuffleOne is ERC721, Ownable{
+/// @notice ERC721 randomized distribution
+contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     using Counters for Counters.Counter;
 
     /// ============ Structs ============
@@ -43,12 +46,24 @@ contract ShuffleOne is ERC721, Ownable{
     /// @notice Array of NFTs ID to be minted 
     uint256[] public NFTsId;
     /// @notice Source of entropy
-    uint256 public entropy = block.timestamp;
+    uint256 public entropy;
     /// @notice Owner has claimed raffle proceeds
     bool public proceedsClaimed = false;
 
     /// @notice Keeps track of sold tickets 
     Counters.Counter internal _soldTicketsCounter;
+
+
+    // VRF v2
+
+    bytes32 internal immutable _keyHash;
+    uint64 internal immutable _subId;
+    
+    uint256 internal _requestId;
+
+    uint16 public constant MINIMUM_CONFIRMATIONS = 3;
+    uint32 public constant CALLBACK_GAS_LIMIT = 1_200_000;
+    uint32 public constant WORDS_AMOUNT = 10;
 
     /// ============ Events ============
 
@@ -68,24 +83,33 @@ contract ShuffleOne is ERC721, Ownable{
     /// @param _AVAILABLE_SUPPLY total NFTs to sell
     /// @param _MINT_COST in wei per ticket
     constructor(
+        address vrfCoordinator,
+        bytes32 keyHash,
+        uint64 subId,
         uint256 _AVAILABLE_SUPPLY,
         uint256 _MINT_COST
-    ) 
-    ERC721("Random NFT", "rNFT") {
+    )
+        ERC721("Random NFT", "rNFT")
+        VRFConsumerBaseV2(vrfCoordinator)
+    {
         AVAILABLE_SUPPLY = _AVAILABLE_SUPPLY;
         MINT_COST = _MINT_COST;
+
+        _keyHash = keyHash;
+        _subId = subId;
     }
 
     /// ============ Functions ============
 
     /// @notice Enters raffle 
-    function buyTicket() external payable{
+    function buyTicket() external payable {
         //Ensure there are tickets to be sell
         require(_soldTicketsCounter.current() < AVAILABLE_SUPPLY, "All tickets sold");
         // Ensure participant owns no more than allow
         require(participants[msg.sender].ownedTickets < MAX_PER_ADDRESS, "Address owns ticket");
         // Ensure sufficient raffle ticket payment
         require(msg.value >= MINT_COST, "Insufficient payment");
+
 
         // Participant gets ticket
         participants[msg.sender].ownedTickets++;
@@ -100,6 +124,26 @@ contract ShuffleOne is ERC721, Ownable{
         emit TicketSold(msg.sender, _soldTicketsCounter.current());
     }
 
+    function requestRandomness() external {
+        require(_requestId == 0, 'random already requested');
+        _requestId = VRFCoordinatorV2Interface(vrfCoordinator).requestRandomWords(
+            _keyHash, _subId, MINIMUM_CONFIRMATIONS, CALLBACK_GAS_LIMIT, WORDS_AMOUNT
+        );
+    }
+
+    function getRequestId() external view returns(uint256) {
+        return _requestId;
+    }
+
+    function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords) internal override {
+        // verify requestId
+        require(_requestId == requestId, "requestId do not match");
+        require(entropy == 0, "entropy already set");
+        // set entropy
+        entropy = randomWords[0];
+    }
+
+
     /// @notice Generate rand index for the NFTid, mint NFT and remove it from array 
     function mint() public {
         // Ensure participant owns ticket
@@ -108,9 +152,11 @@ contract ShuffleOne is ERC721, Ownable{
         require(participants[msg.sender].minted < MAX_PER_ADDRESS, "Max allow per address minted");
         // Ensure raffle is closed
         require(_soldTicketsCounter.current() == AVAILABLE_SUPPLY, "Raffle still open");
+        // Ensure entropy is set
+        require(entropy != 0, "entropy is not set");
 
         // Pick index from NFTsIds
-        uint256 randomIndex = getRandmonIndex();
+        uint256 randomIndex = getRandomIndex();
         
         // Get random ID value from NFTsIds
         uint256 randomNFTsId = NFTsId[randomIndex];
@@ -120,7 +166,6 @@ contract ShuffleOne is ERC721, Ownable{
 
         // Remove minted ID from NFTsIds array
         removeIndexFromArray(randomIndex);
-
         // Update participants data
         participants[msg.sender].randomIndex = randomIndex;
         participants[msg.sender].tokenId = randomNFTsId;
@@ -132,9 +177,9 @@ contract ShuffleOne is ERC721, Ownable{
     }
 
     /// @notice Get a random index from the NFTsId array 
-    function getRandmonIndex() internal view returns (uint) {
+    function getRandomIndex() internal view returns (uint) {
         // Picks a random index between 0 and NFTsIDs length
-        return uint(keccak256(abi.encodePacked(entropy))) % NFTsId.length;
+        return entropy % NFTsId.length;
     }
 
     /// @notice Delete minted id from array, gas efficient, no re-ordering of indexs

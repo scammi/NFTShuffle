@@ -12,9 +12,10 @@ const GAS_PRICE_LINK = "1000000000" // 0.000000001 LINK per gas
 module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   const { deploy, log } = deployments
   const { deployer } = await getNamedAccounts()
-  const chainId = network.config.chainId
+  const chainId = await getChainId()
   // If we are on a local development network, we need to deploy mocks!
   if (chainId == 31337) {
+
     log("Local network detected! Deploying mocks...")
     const linkToken = await deploy("LinkToken", { from: deployer, log: true })
     await deploy("MockV3Aggregator", {
