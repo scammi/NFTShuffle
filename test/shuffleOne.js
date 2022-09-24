@@ -68,8 +68,6 @@ describe("ShuffleOne", function() {
   });
 
   describe("Mint token", function() {
-
-
     it("Should revert on mint if not all tokens have been sold", async() => {
       const ticket = await raffle.buyTicket(ticketPaymentOver);
       await ticket.wait();
@@ -78,7 +76,6 @@ describe("ShuffleOne", function() {
     });
     
     it("Mints single token", async() => {
-
       const accounts = await createWallets(4);
       await Promise.all(accounts.map(acc => raffle.connect(acc).buyTicket(ticketPaymentOver)));
 
@@ -87,7 +84,7 @@ describe("ShuffleOne", function() {
 
       // request randomness 
       await (await raffle.requestRandomness()).wait();
-      const requestId  = await raffle.getRequestId()
+      const requestId  = await raffle.getRequestId();
       // fulfill request
       await (await vrfCoordinatorV2Mock.fulfillRandomWords(requestId, raffle.address)).wait()
 
@@ -114,7 +111,6 @@ describe("ShuffleOne", function() {
       const requestId  = await raffle.getRequestId()
       // fulfill request
       await (await vrfCoordinatorV2Mock.fulfillRandomWords(requestId, raffle.address)).wait()
-
 
       const mint = await raffle.mint();
       await mint.wait();
@@ -144,9 +140,6 @@ describe("ShuffleOne", function() {
 
       // available supply less one since contract index starts at 0
       for(let i = AVAILABLE_SUPPLY.toNumber()-1; i >= 0; i--) {
-
-
-
         const mint = await raffle.connect(accounts[i]).mint();
         await mint.wait();
         
@@ -167,9 +160,9 @@ describe("ShuffleOne", function() {
       // fulfill request
       await (await vrfCoordinatorV2Mock.fulfillRandomWords(requestId, raffle.address)).wait()
 
-      await Promise.all(accounts.map(acc => raffle.connect(acc).mint()))
+      await Promise.all(accounts.map(acc => raffle.connect(acc).mint()));
 
-      let participants = await Promise.all(accounts.map(acc=>raffle.participants(acc.getAddress())))
+      let participants = await Promise.all(accounts.map(acc=>raffle.participants(acc.getAddress())));
 
       let uniqueNFTsIds = [];
       let duplicatesNFTsIds = [];
