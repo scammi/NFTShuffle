@@ -131,6 +131,10 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
         );
     }
 
+    function getRequestId() external view returns(uint256) {
+        return _requestId;
+    }
+
     function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords) internal override {
         // verify requestId
         require(_requestId == requestId, "requestId do not match");
