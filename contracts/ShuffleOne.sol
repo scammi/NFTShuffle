@@ -11,7 +11,7 @@ import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 
 /// @title ShuffleOne
-/// @author Santiago Cammi (scammi)
+/// @author Rloot
 /// @notice ERC721 randomized distribution
 contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     using Counters for Counters.Counter;
@@ -32,6 +32,8 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
 
     /// ============ Immutable storage ============
 
+    /// @notice Blocknumber raffle ends at.
+    uint public immutable RAFFLE_FINALIZATION_BLOCKNUMBER;
     /// @notice Avalible NFTs to be minted
     uint256 public immutable AVAILABLE_SUPPLY;
     /// @notice Minimum cost for ticket
@@ -53,9 +55,7 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     /// @notice Keeps track of sold tickets 
     Counters.Counter internal _soldTicketsCounter;
 
-
     // VRF v2
-
     bytes32 internal immutable _keyHash;
     uint64 internal immutable _subId;
     
@@ -87,13 +87,15 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
         bytes32 keyHash,
         uint64 subId,
         uint256 _AVAILABLE_SUPPLY,
-        uint256 _MINT_COST
+        uint256 _MINT_COST,
+        uint _BIDDING_BLOCKS_LENGTH
     )
         ERC721("Random NFT", "rNFT")
         VRFConsumerBaseV2(vrfCoordinator)
     {
         AVAILABLE_SUPPLY = _AVAILABLE_SUPPLY;
         MINT_COST = _MINT_COST;
+        RAFFLE_FINALIZATION_BLOCKNUMBER = block.number + _BIDDING_BLOCKS_LENGTH; 
 
         _keyHash = keyHash;
         _subId = subId;

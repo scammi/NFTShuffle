@@ -1,7 +1,5 @@
 const {
   networkConfig,
-  developmentChains,
-  VERIFICATION_BLOCK_CONFIRMATIONS,
 } = require("../helper-hardhat-config")
 
 
@@ -36,7 +34,8 @@ module.exports = async function (hre) {
       networkConfig[chainId].keyHash,
       subscriptionId,
       5,
-      ethers.utils.parseEther("0.1")
+      ethers.utils.parseEther("0.1"),
+      1000 // BIDDING_BLOCKS_LENGTH
     ],
     log: true,
   });

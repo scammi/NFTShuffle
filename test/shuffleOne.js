@@ -21,7 +21,6 @@ describe("ShuffleOne", function() {
   });
 
   describe("BuyTicket", function() {
-
     it("Should buy a ticket", async() => {
       const ticket = await raffle.buyTicket(ticketPaymentOver);
       await ticket.wait();
@@ -64,6 +63,15 @@ describe("ShuffleOne", function() {
 
         expect(await raffle.geSoldTickets()).to.be.equal(i +1);
       }
+    });
+
+    it.only("Should disallow buying ticket after block number", async() => {
+      // get RAFFLE_FINALIZATION_BLOCKNUMBER
+      const raffleEndBlock = await raffle.RAFFLE_FINALIZATION_BLOCKNUMBER();
+      console.log(raffleEndBlock.toString());
+      // buy ticket before time lock should be enabled
+
+      // should revert with message if buying after timelock.
     });
   });
 
