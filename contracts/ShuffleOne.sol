@@ -105,13 +105,14 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
 
     /// @notice Enters raffle 
     function buyTicket() external payable {
-        //Ensure there are tickets to be sell
+        // Ensure there are tickets to be sell
         require(_soldTicketsCounter.current() < AVAILABLE_SUPPLY, "All tickets sold");
         // Ensure participant owns no more than allow
         require(participants[msg.sender].ownedTickets < MAX_PER_ADDRESS, "Address owns ticket");
         // Ensure sufficient raffle ticket payment
         require(msg.value >= MINT_COST, "Insufficient payment");
-
+        // Ensure raffle is open
+        require(block.number < RAFFLE_FINALIZATION_BLOCKNUMBER, "Raffle has ended");
 
         // Participant gets ticket
         participants[msg.sender].ownedTickets++;

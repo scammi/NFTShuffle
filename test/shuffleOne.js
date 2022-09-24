@@ -69,9 +69,19 @@ describe("ShuffleOne", function() {
       // get RAFFLE_FINALIZATION_BLOCKNUMBER
       const raffleEndBlock = await raffle.RAFFLE_FINALIZATION_BLOCKNUMBER();
       expect(raffleEndBlock.toNumber()).to.equal(1007);
-      // buy ticket before time lock should be enabled
 
+      const accounts = await createWallets(2);
+
+      // buy ticket before time lock should be enabled
+      const ticket = await raffle.connect(accounts[0]).buyTicket(ticketPaymentOver);
+      await ticket.wait();
+      const participant = await raffle.participants(await accounts[0].getAddress());
+      expect(participant.ownedTickets).to.equal(1);
+ 
       // should revert with message if buying after timelock.
+      // mine 1000 blocks with an interval of 1 minute
+      await hre.network.provider.send("hardhat_mine", ["0x3e8"]);
+      await expect(raffle.connect(accounts[1]).buyTicket(ticketPaymentOver)).to.be.revertedWith("Raffle has ended");
     });
   });
 
