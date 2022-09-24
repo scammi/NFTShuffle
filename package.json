@@ -4,7 +4,7 @@
   "description": "NFTHack 2022: NFT that points to a random number.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "yarn hardhat test --deploy-fixture"
   },
   "repository": {
     "type": "git",
@@ -18,9 +18,9 @@
   },
   "homepage": "https://github.com/scammi/NFTShuffle#readme",
   "dependencies": {
+    "@appliedblockchain/chainlink-contracts": "^0.0.4",
     "@chainlink/contracts": "^0.4.1",
-    "@openzeppelin/contracts": "^4.4.2",
-    "@chainlink/token": "^1.1.0"
+    "@openzeppelin/contracts": "^4.4.2"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers",
@@ -29,7 +29,7 @@
     "chai-ethers": "^0.0.1",
     "ethereum-waffle": "^3.4.0",
     "ethers": "^5.7.1",
-    "hardhat": "^2.11.2",
+    "hardhat": "^2.8.3",
     "hardhat-deploy": "^0.11.15",
     "mocha": "^10.0.0"
   }
