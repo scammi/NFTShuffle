@@ -68,7 +68,7 @@ describe("ShuffleOne", function() {
     it.only("Should disallow buying ticket after block number", async() => {
       // get RAFFLE_FINALIZATION_BLOCKNUMBER
       const raffleEndBlock = await raffle.RAFFLE_FINALIZATION_BLOCKNUMBER();
-      console.log(raffleEndBlock.toString());
+      expect(raffleEndBlock.toNumber()).to.equal(1007);
       // buy ticket before time lock should be enabled
 
       // should revert with message if buying after timelock.
