@@ -1,19 +1,24 @@
-import * as React from "react"
+import * as React from "react";
 
-import Layout from "../components/layout"
-import Seo from "../components/seo"
-import * as styles from "../components/index.module.css"
+import Layout from "../components/layout";
+import Seo from "../components/seo";
+import * as styles from "../components/index.module.css";
+import { useIsRaffleOpen } from "../hooks/useIsRaffleOpen";
 
-const IndexPage = () => (
-  <Layout>
-    <Seo title="Home" />
-    <div className={styles.textCenter}>
-      <h1>
-        Welcome to <b>NFTshuffle!</b>
-      </h1>
-    </div>
-  </Layout>
-)
+const IndexPage = () => { 
+  useIsRaffleOpen();
+
+  return (
+    <Layout>
+      <Seo title="Home" />
+      <div className={styles.textCenter}>
+        <h1>
+          Welcome to <b>NFTshuffle!</b>
+        </h1>
+      </div>
+    </Layout>
+  )
+}
 
 /**
  * Head export to define metadata for the page
