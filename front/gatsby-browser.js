@@ -3,9 +3,9 @@
  *
  * See: https://www.gatsbyjs.com/docs/browser-apis/
  */
-import React from "react";
-import { DAppProvider, Mainnet, Goerli } from "@usedapp/core";
-import { getDefaultProvider } from "ethers";
+const React = require("react");
+const { getDefaultProvider } = require("ethers")
+const { DAppProvider, Mainnet, Goerli } = require("@usedapp/core");
 
 const config = {
   readOnlyChainId: Mainnet.chainId,
