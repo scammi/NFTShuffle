@@ -1,7 +1,9 @@
 import * as React from "react"
 import PropTypes from "prop-types"
 import { Link } from "gatsby"
-import { Button } from "@mui/material"
+
+import { MetamaskConnect } from "../components/MetamaskConnect";
+
 
 const Header = ({ siteTitle }) => (
   <header
@@ -22,10 +24,7 @@ const Header = ({ siteTitle }) => (
     >
       {siteTitle}
     </Link>
-    <Button>
-      Connect wallet
-    </Button>
-
+    <MetamaskConnect />
   </header>
 )
 
