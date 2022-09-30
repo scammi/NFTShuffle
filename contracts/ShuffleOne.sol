@@ -129,11 +129,7 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
 
     function requestRandomness() external {
         require(_requestId == 0, 'random already requested');
-        require(
-            _soldTicketsCounter.current() == AVAILABLE_SUPPLY ||
-            block.number >= RAFFLE_FINALIZATION_BLOCKNUMBER
-            , "Raffle still open"
-        );
+        require(isRaffleOpen(), "Raffle still open");
 
         _requestId = VRFCoordinatorV2Interface(vrfCoordinator).requestRandomWords(
             _keyHash, _subId, MINIMUM_CONFIRMATIONS, CALLBACK_GAS_LIMIT, WORDS_AMOUNT
@@ -160,11 +156,7 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
         // Ensure minted amount < max allow
         require(participants[msg.sender].minted < MAX_PER_ADDRESS, "Max allow per address minted");
         // Ensure raffle is closed
-        require(
-            _soldTicketsCounter.current() == AVAILABLE_SUPPLY ||
-            block.number >= RAFFLE_FINALIZATION_BLOCKNUMBER
-            , "Raffle still open"
-        );
+        require(isRaffleOpen(), "Raffle still open");
         // Ensure entropy is set
         require(entropy != 0, "Entropy is not set");
 
@@ -221,8 +213,7 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     /// @notice Allows contract owner to withdraw proceeds of tickets
     function withdrawRaffleProceeds() external onlyOwner {
         // Ensure raffle has ended
-        require(_soldTicketsCounter.current() == AVAILABLE_SUPPLY, "Raffle still open");
-        // Ensure proceeds have not already been claimed
+        require(isRaffleOpen(), "Raffle still open");        // Ensure proceeds have not already been claimed
         require(!proceedsClaimed, "Proceeds already claimed");
 
         // Toggle proceeds being claimed
@@ -236,5 +227,16 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     // @Notice overrides base url
     function _baseURI() internal view override virtual returns (string memory) {
         return "https://ipfs.io/ipfs/QmQxDjEhnYP6QAtLRyLV9N7dn1kDigz7iWnx5psmyXqy35/";
+    }
+
+    function isRaffleOpen() public view returns (bool) {
+        if (
+            _soldTicketsCounter.current() == AVAILABLE_SUPPLY || 
+            block.number >= RAFFLE_FINALIZATION_BLOCKNUMBER
+        ) { 
+            return true; 
+        } else {
+            return false;
+        }
     }
 }
