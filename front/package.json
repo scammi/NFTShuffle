@@ -9,7 +9,6 @@
     "@emotion/styled": "^11.10.4",
     "@mui/material": "^5.10.7",
     "@mui/styled-engine-sc": "^5.10.6",
-    "@usedapp/core": "^1.1.5",
     "ethers": "^5.7.1",
     "gatsby": "^4.24.0",
     "gatsby-plugin-image": "^2.24.0",

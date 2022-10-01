@@ -1,12 +1,11 @@
 import React from 'react'
-import { useEthers } from '@usedapp/core'
 
 export const MetamaskConnect = () => {
-  const { account, activateBrowserWallet } = useEthers()
-
+  let account = void(0);
+  
   const ConnectButton = () => (
     <div>
-      <button onClick={() => activateBrowserWallet()}>Connect</button>
+      <button onClick={() => {} }>Connect</button>
       <p>Connect to wallet.</p>
     </div>
   )
