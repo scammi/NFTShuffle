@@ -100,9 +100,9 @@ export function Updater() {
 
     if (_.isEmpty(state.readProvider)) {
       const readProvider = ethers.getDefaultProvider(_DEFAULT_CHAIN_ID, {
-        alchemy   : GLOBALS.ALCHEMY_APIKEY[_DEFAULT_CHAIN_ID],
-        etherscan : GLOBALS.ETHERSCAN_APIKEY,
-        infura    : GLOBALS.INFURA_APIKEY,
+        // alchemy   : GLOBALS.ALCHEMY_APIKEY[_DEFAULT_CHAIN_ID],
+        // etherscan : GLOBALS.ETHERSCAN_APIKEY,
+        // infura    : GLOBALS.INFURA_APIKEY,
       });
       dispatch({ type: 'UPDATE_WEB3', payload: { readProvider } });
     }
