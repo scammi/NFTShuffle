@@ -1,16 +1,23 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useWeb3Context } from "../context/Web3";
 import { useShuffleOne } from "./useShuffleOne";
 
-const useIsRaffleOpen = async () => {
+const useIsRaffleOpen = () => {
   const [ web3 ] = useWeb3Context();
-
   const shuffleOne = useShuffleOne(web3.chainId);
 
-  const isOpen = await shuffleOne.AVAILABLE_SUPPLY();
-  console.log(isOpen);
+  const [ isRaffleOpen, setIsRaffleOpen ] = useState();
 
-  return shuffleOne;
+  useEffect(() => {
+    (async()=>{
+      const isOpen = await shuffleOne.isRaffleOpen();
+
+      setIsRaffleOpen(isOpen);
+    })();
+  },[]);
+
+  console.log(isRaffleOpen);
+  return isRaffleOpen;
 };
 
 export { useIsRaffleOpen };

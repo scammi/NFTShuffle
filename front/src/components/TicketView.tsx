@@ -1,9 +1,7 @@
 import React from "react";
 import { useIsRaffleOpen } from "../hooks/useIsRaffleOpen"
 
-type Props = {
-
-}
+type Props = {}
 
 const TicketView = ({}: Props) => {
   const isOpen = useIsRaffleOpen();
