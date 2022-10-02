@@ -10,7 +10,7 @@ const GLOBALS: GLOBALS = {
     shuffleOne: {
       1: '',
       5: '',
-      1337: '0x0165878A594ca255338adfa4d48449f69242Eb8F',
+      31337: '0x0165878A594ca255338adfa4d48449f69242Eb8F',
     }
   }
 };
