@@ -14,29 +14,23 @@ function AppContexts({ children }) {
   );
 }
 
-// function AppUpdaters() {
-//   useEffect(() => {
-//   }, []);
+function AppUpdaters() {
+  useEffect(() => {
+  }, []);
 
-//   return (
-//     <>
-//       <Web3ContextUpdater />
-//     </>
-//   );
-// }
-
-// export const wrapRootElement = ({ element }) => {
-//   return (
-//     <AppContexts>
-//       <AppUpdaters />
-//       {element}
-//     </AppContexts>
-//   )
-// }
-export const wrapRootElement = ({ element }) => {
   return (
-    element
-  )
+    <>
+      <Web3ContextUpdater />
+    </>
+  );
 }
 
+export const wrapRootElement = ({ element }) => {
+  return (
+    <AppContexts>
+      <AppUpdaters />
+      {element}
+    </AppContexts>
+  )
+}
 

@@ -8,7 +8,7 @@ import _ from 'lodash';
 // App Components
 import { GLOBALS } from '../utils/globals';
 
-const _DEFAULT_CHAIN_ID = _.first([5]);
+export const _DEFAULT_CHAIN_ID = _.first([5]);
 
 export const providerOptions = {
   injected: {
@@ -159,7 +159,7 @@ const _getConnectedAccount = async (instance) => {
   };
 };
 
-const _connectWeb3 = async (dispatch, clearCache = false) => {
+const _connectWeb3 = async (dispatch, clearCache = true) => {
   if (clearCache) {
     await web3Modal.clearCachedProvider();
   }
