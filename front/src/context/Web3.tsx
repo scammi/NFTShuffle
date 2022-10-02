@@ -8,7 +8,7 @@ import _ from 'lodash';
 // App Components
 import { GLOBALS } from '../utils/globals';
 
-export const _DEFAULT_CHAIN_ID = _.first([5]);
+export const _DEFAULT_CHAIN_ID = _.first([1337, 5]);
 
 export const providerOptions = {
   injected: {
@@ -99,7 +99,9 @@ export function Updater() {
     }
 
     if (_.isEmpty(state.readProvider)) {
-      const readProvider = ethers.getDefaultProvider(_DEFAULT_CHAIN_ID, {
+      const readProvider = ethers.getDefaultProvider(
+        _DEFAULT_CHAIN_ID === 1337 ?
+        'http://127.0.0.1:8545/' : _DEFAULT_CHAIN_ID, {
         // alchemy   : GLOBALS.ALCHEMY_APIKEY[_DEFAULT_CHAIN_ID],
         // etherscan : GLOBALS.ETHERSCAN_APIKEY,
         // infura    : GLOBALS.INFURA_APIKEY,

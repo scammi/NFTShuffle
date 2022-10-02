@@ -11,6 +11,7 @@ const useShuffleOne = (chainId: number) => {
   const shuffleOneAddress = GLOBALS.CONTRACT_ADDRESSES.shuffleOne[chainId];
 
   const contract = new Contract(shuffleOneAddress, shuffleOne.abi, web3.readProvider);
+  console.log(contract);
 
   return contract;
 };
