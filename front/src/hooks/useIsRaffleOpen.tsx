@@ -6,13 +6,13 @@ const useIsRaffleOpen = () => {
   const [ web3 ] = useWeb3Context();
   const shuffleOne = useShuffleOne(web3.chainId);
 
-  const [ isRaffleOpen, setIsRaffleOpen ] = useState();
+  const [ isRaffleOpen, setIsRaffleOpen ] = useState(false);
 
   useEffect(() => {
     (async()=>{
       const isOpen = await shuffleOne.isRaffleOpen();
 
-      setIsRaffleOpen(isOpen);
+      setIsRaffleOpen(!isOpen);
     })();
   },[]);
 
