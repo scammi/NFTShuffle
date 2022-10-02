@@ -3,8 +3,6 @@ import { useWeb3Context } from '../context/Web3';
 
 export const MetamaskConnect = () => {
   const [web3, , connect] = useWeb3Context();
-  console.log(web3.isConnected);
-  console.log(web3)
 
   const _connectWallet = async () => {
     try {

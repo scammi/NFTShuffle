@@ -1,13 +1,14 @@
 import * as React from "react";
 
-import Layout from "../components/layout";
 import Seo from "../components/seo";
+import Layout from "../components/layout";
 import * as styles from "../components/index.module.css";
-import { useIsRaffleOpen } from "../hooks/useIsRaffleOpen";
+import { TicketView } from "../components/TicketView";
+import { useWeb3Context } from "../context/Web3";
 
 const IndexPage = () => { 
-  useIsRaffleOpen();
-
+  const [ web3 ] = useWeb3Context();
+  
   return (
     <Layout>
       <Seo title="Home" />
@@ -15,6 +16,7 @@ const IndexPage = () => {
         <h1>
           Welcome to <b>NFTshuffle!</b>
         </h1>
+          { web3.isConnected && <TicketView />}
       </div>
     </Layout>
   )

@@ -1,6 +1,0 @@
-
-const GLOBALS = {};
-
-GLOBALS.INFURA_APIKEY = "aebcaf12b8f848048529c2682a65917e"
-
-export { GLOBALS };
