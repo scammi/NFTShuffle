@@ -11,12 +11,10 @@ const useIsRaffleOpen = () => {
   useEffect(() => {
     (async()=>{
       const isOpen = await shuffleOne.isRaffleOpen();
-
       setIsRaffleOpen(!isOpen);
     })();
   },[]);
 
-  console.log(isRaffleOpen);
   return isRaffleOpen;
 };
 
