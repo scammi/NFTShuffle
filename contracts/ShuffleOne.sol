@@ -231,8 +231,8 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
 
     function isRaffleOpen() public view returns (bool) {
         if (
-            _soldTicketsCounter.current() == AVAILABLE_SUPPLY || 
-            block.number >= RAFFLE_FINALIZATION_BLOCKNUMBER
+            _soldTicketsCounter.current() < AVAILABLE_SUPPLY && 
+            block.number <= RAFFLE_FINALIZATION_BLOCKNUMBER
         ) { 
             return true; 
         } else {
