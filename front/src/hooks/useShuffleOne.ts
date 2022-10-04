@@ -14,8 +14,6 @@ const useShuffleOne = () => {
   const provider = web3.writeProvider ? web3.writeProvider.getSigner() : web3.readProvider;
   const contract = new Contract(shuffleOneAddress, shuffleOne.abi, provider);
 
-  console.log(contract, web3.writeProvider);
-
   return contract;
 };
 

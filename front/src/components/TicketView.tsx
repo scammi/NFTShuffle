@@ -12,9 +12,13 @@ const BuyTicket = () => {
 
   // todo check if user bough ticket;
   const buyTicketHandle = async () => {
-    const response = await shuffleOne.buyTicket({ value: ethers.utils.parseEther("0.2") });
-    const receipt = await response.wait();
-    console.log(receipt);
+    try {
+      const response = await shuffleOne.buyTicket({ value: ethers.utils.parseEther("0.2") });
+      const receipt = await response.wait();
+      console.log(receipt);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
