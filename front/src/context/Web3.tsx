@@ -36,7 +36,7 @@ const initialState = {
   readProvider  : null,
   writeProvider : null,
   signer        : null,
-  chainId       : _DEFAULT_CHAIN_ID,
+  chainId       : null,
   accounts      : [],
   connectedAccount : null,
 };
@@ -72,7 +72,7 @@ const Web3Reducer = (state, action) => {
 
 export default function Provider({ children }) {
   const [ state, dispatch ] = useReducer(Web3Reducer, initialState);
-  const connect = async (clearCache = false) => {
+  const connect = async (clearCache = true) => {
     return await _connectWeb3(dispatch, clearCache);
   };
   const disconnect = async () => _disconnectWeb3(dispatch);
@@ -89,7 +89,7 @@ export function Updater() {
   useEffect(() => {
     web3Modal = new Web3Modal({
       // network: 'mainnet', // optional
-      cacheProvider: true,
+      cacheProvider: false,
       disableInjectedProvider: false, // For MetaMask / Brave / Opera.
       providerOptions,
     });
@@ -122,7 +122,7 @@ export function Updater() {
       };
 
       const handleChainChanged = (_hexChainId) => {
-        dispatch({ type: 'UPDATE_WEB3', payload: { chainId: _hexChainId } });
+        dispatch({ type: 'UPDATE_WEB3', payload: { chainId: parseInt(_hexChainId, 16) } });
       };
 
       const handleDisconnect = () => {
@@ -165,7 +165,7 @@ const _connectWeb3 = async (dispatch, clearCache = true) => {
   if (clearCache) {
     await web3Modal.clearCachedProvider();
   }
-
+  
   const instance = await web3Modal.connect();
   const account = await _getConnectedAccount(instance);
 
@@ -188,7 +188,7 @@ const _disconnectWeb3 = async (dispatch) => {
       instance: null,
       writeProvider: null,
       signer: null,
-      chainId: _DEFAULT_CHAIN_ID,
+      chainId: null,
       accounts: [],
     },
   });

@@ -8,8 +8,8 @@ const GLOBALS: GLOBALS = {
   INFURA_APIKEY:  "aebcaf12b8f848048529c2682a65917e",
   CONTRACT_ADDRESSES: {
     shuffleOne: {
-      1: '',
-      5: '',
+      // 1: '',
+      // 5: '',
       31337: '0x0165878A594ca255338adfa4d48449f69242Eb8F',
     }
   }
