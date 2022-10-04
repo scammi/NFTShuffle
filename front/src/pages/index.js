@@ -13,7 +13,6 @@ const IndexPage = () => {
 
   const isNetworkSupported = () => {
     const supportedNetworks = Object.keys(GLOBALS.CONTRACT_ADDRESSES.shuffleOne);
-    console.log(supportedNetworks.includes(web3.chainId), String(web3.chainId) );
     return supportedNetworks.includes(String(web3.chainId));
   };
   isNetworkSupported();
@@ -25,7 +24,7 @@ const IndexPage = () => {
           Welcome to <b>NFTshuffle!</b>
         </h1>
           {
-           web3.isConnected ? isNetworkSupported() ? <TicketView /> : 'Please select a supported network': 
+           web3.isConnected ? isNetworkSupported() ? <TicketView /> : 'Please select a supported network' : 
             'Please connect wallet'
           }
       </div>

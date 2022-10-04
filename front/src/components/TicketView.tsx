@@ -27,8 +27,6 @@ const BuyTicket = () => {
 const TicketView = ({}: Props) => {
   const isOpen = useIsRaffleOpen();
 
-  // return `Ticket View : )  ${isOpen ? 'Ruffle is open' : 'Raffle is closed' }`;
-
   if (isOpen) {
    return <BuyTicket /> 
   } else {
