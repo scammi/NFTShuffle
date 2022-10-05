@@ -188,6 +188,46 @@ describe("ShuffleOne", function () {
       }
     });
 
+    it("Raffle closes when all tickets are bougth", async () => {
+      const accounts = await createWallets(AVAILABLE_SUPPLY - 1);
+
+      console.log(await raffle.AVAILABLE_SUPPLY())
+      console.log(await raffle.geSoldTickets())
+      await Promise.all(
+        accounts
+        .map(
+          acc => raffle.connect(acc).buyTicket({value: MINT_COST})
+        )
+      );
+
+      console.log(await raffle.geSoldTickets())
+      expect(await raffle.isRaffleOpen()).to.be.equal(true)
+      await raffle.buyTicket({value: MINT_COST})
+      console.log(await raffle.AVAILABLE_SUPPLY())
+      expect(await raffle.isRaffleOpen()).to.be.equal(false)
+
+    });
+
+    it.only("Raffle closes after a certain block number", async () => {
+      // const accounts = await createWallets(AVAILABLE_SUPPLY - 1);
+
+      expect(await raffle.isRaffleOpen()).to.be.equal(true)
+      console.log(await raffle.RAFFLE_FINALIZATION_BLOCKNUMBER());
+      await raffle.buyTicket({value: MINT_COST})
+
+      
+      
+      // advance 1000 blocks
+      await hre.network.provider.send("hardhat_mine", ["0x3e6"]);
+      expect(await raffle.isRaffleOpen()).to.be.equal(true)
+      // advance 1000 blocks
+      await hre.network.provider.send("hardhat_mine", ["01"]);
+    
+      expect(await raffle.isRaffleOpen()).to.be.equal(false)
+
+    });
+
+
     it("has no repeated IDs for NFTs", async () => {
       const accounts = await createWallets(AVAILABLE_SUPPLY);
       await Promise.all(accounts.map(acc => raffle.connect(acc).buyTicket(ticketPaymentOver)));
