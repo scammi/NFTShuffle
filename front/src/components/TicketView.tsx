@@ -25,14 +25,16 @@ const TicketView = ({}: Props) => {
       const userTicket = await shuffleOne.participants(web3.wallet);
 
       // Can buy ?
-      if (!isOpen && (maxPerAddress.gt(userTicket.ownedTickets))) { setCanBuy(true); }
+     setCanBuy(!isOpen && (maxPerAddress.gt(userTicket.ownedTickets)));
 
       // Can mint ?
-      if (isOpen && (userTicket.minted.lt(userTicket.ownedTickets))) { setCanMint(true) };
+     setCanMint(isOpen && (userTicket.minted.lt(userTicket.ownedTickets)));
 
       // Ticket left
       const ticketsSold = await shuffleOne._soldTicketsCounter();
       const maxSupply = await shuffleOne.AVAILABLE_SUPPLY();
+
+      console.log(canBuy)
       setTicketsLeft(maxSupply.sub(ticketsSold).toString());
     })();
   }, [ buyTransaction, mintTransaction ] );
@@ -70,10 +72,12 @@ const TicketView = ({}: Props) => {
   return (
     <>
       Tickets left {ticketsLeft}
+      <div>
+      { canBuy && <BuyTicketButton /> || canMint && <MintTokenButton /> }
+      </div>
+      { (!canBuy && !canMint) && 'Please be patient and wait for the raffle to end to mint :) '}
     </> 
   );
-  if (canBuy) { return <BuyTicketButton /> }
-  else if (canMint) { return  <MintTokenButton /> }
 };
 
 export { TicketView };
