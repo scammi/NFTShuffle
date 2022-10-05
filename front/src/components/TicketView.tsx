@@ -69,7 +69,7 @@ const TicketView = ({}: Props) => {
 
   return (
     <>
-      { (ticketsLeft > 0) ? `Tickets left ${ticketsLeft}` : 'Sold out ! MINT !!!!' }
+      { (ticketsLeft > 0) ? `Tickets left ${ticketsLeft}` : 'Sold out! MINT !!!!' }
       <div>
       { canBuy && <BuyTicketButton /> || canMint && <MintTokenButton /> }
       </div>

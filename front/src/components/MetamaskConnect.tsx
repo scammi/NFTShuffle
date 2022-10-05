@@ -23,7 +23,6 @@ export const MetamaskConnect = () => {
   const ConnectButton = () => (
     <div>
       <button onClick={() => { _connectWallet() }}>Connect</button>
-      <p>Connect to wallet.</p>
     </div>
   );
 
