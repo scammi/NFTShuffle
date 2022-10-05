@@ -94,24 +94,27 @@ export function Updater() {
       providerOptions,
     });
 
-    if (web3Modal.cachedProvider) {
-      _connectWeb3(dispatch);
-    }
+    // if (web3Modal.cachedProvider) {
+    //   _connectWeb3(dispatch);
+    // }
 
-    if (_.isEmpty(state.readProvider)) {
-      const readProvider = ethers.getDefaultProvider(
-        _DEFAULT_CHAIN_ID === 31337 ?
-        'http://127.0.0.1:8545/' : _DEFAULT_CHAIN_ID, {
-        // alchemy   : GLOBALS.ALCHEMY_APIKEY[_DEFAULT_CHAIN_ID],
-        // etherscan : GLOBALS.ETHERSCAN_APIKEY,
-        // infura    : GLOBALS.INFURA_APIKEY,
-      });
-      dispatch({ type: 'UPDATE_WEB3', payload: { readProvider } });
-    }
+    // if (_.isEmpty(state.readProvider)) {
+    //   const readProvider = ethers.getDefaultProvider(
+    //     _DEFAULT_CHAIN_ID === 31337 ?
+    //     'http://127.0.0.1:8545/' : _DEFAULT_CHAIN_ID, {
+    //     // alchemy   : GLOBALS.ALCHEMY_APIKEY[_DEFAULT_CHAIN_ID],
+    //     // etherscan : GLOBALS.ETHERSCAN_APIKEY,
+    //     // infura    : GLOBALS.INFURA_APIKEY,
+    //   });
+    //   dispatch({ type: 'UPDATE_WEB3', payload: { readProvider } });
+    // }
   }, []); // eslint-disable-line
 
   useEffect(() => {
+    console.log(state);
+
     if (state.instance?.on) {
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>');
       const handleAccountsChanged = async (accounts) => {
         if (!_.isEmpty(accounts)) {
           const account = await _getConnectedAccount(state.instance);

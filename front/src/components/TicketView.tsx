@@ -7,9 +7,10 @@ import { ethers } from "ethers"
 
 type Props = {}
 
+
 const BuyTicket = () => {
   const shuffleOne = useShuffleOne();
-
+  
   // todo check if user bough ticket;
   const buyTicketHandle = async () => {
     try {
