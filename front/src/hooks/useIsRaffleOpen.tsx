@@ -16,7 +16,7 @@ const useIsRaffleOpen = () => {
 
       console.log(!isOpen, ticketsBough.ownedTickets,maxPerAddress, maxPerAddress.gte(ticketsBough.ownedTickets));
 
-      if (!isOpen && (maxPerAddress.gte(ticketsBough.ownedTickets))) {
+      if (!isOpen && (maxPerAddress.gt(ticketsBough.ownedTickets))) {
         setCanBuy(true);
       } else {
         setCanBuy(false);
