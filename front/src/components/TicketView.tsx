@@ -16,7 +16,7 @@ const TicketView = ({}: Props) => {
 
   const [ buyTransaction, setBuyTransaction ] = useState();
   const [ mintTransaction, setMintTransaction ] = useState();
-  const [ ticketsLeft, setTicketsLeft ] = useState();
+  const [ ticketsLeft, setTicketsLeft ] = useState(-1);
 
   useEffect(() => {
     (async()=>{
@@ -33,8 +33,6 @@ const TicketView = ({}: Props) => {
       // Ticket left
       const ticketsSold = await shuffleOne._soldTicketsCounter();
       const maxSupply = await shuffleOne.AVAILABLE_SUPPLY();
-
-      console.log(canBuy)
       setTicketsLeft(maxSupply.sub(ticketsSold).toString());
     })();
   }, [ buyTransaction, mintTransaction ] );
@@ -71,11 +69,11 @@ const TicketView = ({}: Props) => {
 
   return (
     <>
-      Tickets left {ticketsLeft}
+      { (ticketsLeft > 0) ? `Tickets left ${ticketsLeft}` : 'Sold out ! MINT !!!!' }
       <div>
       { canBuy && <BuyTicketButton /> || canMint && <MintTokenButton /> }
       </div>
-      { (!canBuy && !canMint) && 'Please be patient and wait for the raffle to end to mint :) '}
+      { (!canBuy && !canMint) && 'Please be patient and wait for the raffle to end to mint :)' }
     </> 
   );
 };
