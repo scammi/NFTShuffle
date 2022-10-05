@@ -16,18 +16,24 @@ const TicketView = ({}: Props) => {
 
   const [ buyTransaction, setBuyTransaction ] = useState();
   const [ mintTransaction, setMintTransaction ] = useState();
+  const [ ticketsLeft, setTicketsLeft ] = useState();
 
   useEffect(() => {
     (async()=>{
       const isOpen = await shuffleOne.isRaffleOpen();
       const maxPerAddress = await shuffleOne.MAX_PER_ADDRESS();
-      const ticketsBough = await shuffleOne.participants(web3.wallet);
+      const userTicket = await shuffleOne.participants(web3.wallet);
 
       // Can buy ?
-      if (!isOpen && (maxPerAddress.gt(ticketsBough.ownedTickets))) { setCanBuy(true); }
+      if (!isOpen && (maxPerAddress.gt(userTicket.ownedTickets))) { setCanBuy(true); }
 
       // Can mint ?
-      if (isOpen && (ticketsBough.minted.lt(ticketsBough.ownedTickets))) { setCanMint(true) };
+      if (isOpen && (userTicket.minted.lt(userTicket.ownedTickets))) { setCanMint(true) };
+
+      // Ticket left
+      const ticketsSold = await shuffleOne._soldTicketsCounter();
+      const maxSupply = await shuffleOne.AVAILABLE_SUPPLY();
+      setTicketsLeft(maxSupply.sub(ticketsSold).toString());
     })();
   }, [ buyTransaction, mintTransaction ] );
 
@@ -61,6 +67,11 @@ const TicketView = ({}: Props) => {
     ); 
   };
 
+  return (
+    <>
+      Tickets left {ticketsLeft}
+    </> 
+  );
   if (canBuy) { return <BuyTicketButton /> }
   else if (canMint) { return  <MintTokenButton /> }
 };
