@@ -25,10 +25,10 @@ const TicketView = ({}: Props) => {
       const userTicket = await shuffleOne.participants(web3.wallet);
 
       // Can buy ?
-     setCanBuy(!isOpen && (maxPerAddress.gt(userTicket.ownedTickets)));
+     setCanBuy(isOpen && (maxPerAddress.gt(userTicket.ownedTickets)));
 
       // Can mint ?
-     setCanMint(isOpen && (userTicket.minted.lt(userTicket.ownedTickets)));
+     setCanMint(!isOpen && (userTicket.minted.lt(userTicket.ownedTickets)));
 
       // Ticket left
       const ticketsSold = await shuffleOne.getSoldTickets();

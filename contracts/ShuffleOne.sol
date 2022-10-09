@@ -156,7 +156,7 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
         // Ensure minted amount < max allow
         require(participants[msg.sender].minted < MAX_PER_ADDRESS, "Max allow per address minted");
         // Ensure raffle is closed
-        require(isRaffleOpen(), "Raffle still open");
+        require(!isRaffleOpen(), "Raffle still open");
         // Ensure entropy is set
         require(entropy != 0, "Entropy is not set");
 
@@ -213,7 +213,7 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     /// @notice Allows contract owner to withdraw proceeds of tickets
     function withdrawRaffleProceeds() external onlyOwner {
         // Ensure raffle has ended
-        require(isRaffleOpen(), "Raffle still open");        // Ensure proceeds have not already been claimed
+        require(!isRaffleOpen(), "Raffle still open");        // Ensure proceeds have not already been claimed
         require(!proceedsClaimed, "Proceeds already claimed");
 
         // Toggle proceeds being claimed
@@ -231,8 +231,8 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
 
     function isRaffleOpen() public view returns (bool) {
         if (
-            _soldTicketsCounter.current() == AVAILABLE_SUPPLY || 
-            block.number >= RAFFLE_FINALIZATION_BLOCKNUMBER
+            _soldTicketsCounter.current() < AVAILABLE_SUPPLY && 
+            block.number <= RAFFLE_FINALIZATION_BLOCKNUMBER
         ) { 
             return true; 
         } else {
