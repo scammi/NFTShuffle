@@ -34,7 +34,7 @@ module.exports = async function (hre) {
       vrfCoordinatorAddress,
       networkConfig[chainId].keyHash,
       subscriptionId,
-      5,
+      1,
       ethers.utils.parseEther("0.1"),
       RAFFLE_FINALIZATION_BLOCKNUMBER // BIDDING_BLOCKS_LENGTH
     ],

@@ -31,7 +31,7 @@ const TicketView = ({}: Props) => {
      setCanMint(isOpen && (userTicket.minted.lt(userTicket.ownedTickets)));
 
       // Ticket left
-      const ticketsSold = await shuffleOne._soldTicketsCounter();
+      const ticketsSold = await shuffleOne.getSoldTickets();
       const maxSupply = await shuffleOne.AVAILABLE_SUPPLY();
       setTicketsLeft(maxSupply.sub(ticketsSold).toString());
     })();

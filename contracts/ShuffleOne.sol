@@ -53,7 +53,7 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     bool public proceedsClaimed = false;
 
     /// @notice Keeps track of sold tickets 
-    Counters.Counter public _soldTicketsCounter;
+    Counters.Counter internal _soldTicketsCounter;
 
     // VRF v2
     bytes32 internal immutable _keyHash;
@@ -206,7 +206,7 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     }
 
     /// @notice Get total numbers of tickets sold 
-    function geSoldTickets() public view returns (uint256) {
+    function getSoldTickets() public view returns (uint256) {
         return _soldTicketsCounter.current();
     }
 
