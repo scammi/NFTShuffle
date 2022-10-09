@@ -208,7 +208,7 @@ describe("ShuffleOne", function () {
 
     });
 
-    it.only ("Raffle closes after a certain block number", async () => {
+    it ("Raffle closes after a certain block number", async () => {
       // const accounts = await createWallets(AVAILABLE_SUPPLY - 1);
       expect(await raffle.isRaffleOpen()).to.be.equal(true)
       console.log(await raffle.RAFFLE_FINALIZATION_BLOCKNUMBER());
