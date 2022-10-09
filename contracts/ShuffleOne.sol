@@ -129,7 +129,7 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
 
     function requestRandomness() external {
         require(_requestId == 0, 'random already requested');
-        require(isRaffleOpen(), "Raffle still open");
+        require(!isRaffleOpen(), "Raffle still open");
 
         _requestId = VRFCoordinatorV2Interface(vrfCoordinator).requestRandomWords(
             _keyHash, _subId, MINIMUM_CONFIRMATIONS, CALLBACK_GAS_LIMIT, WORDS_AMOUNT

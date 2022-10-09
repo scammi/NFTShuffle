@@ -61,7 +61,7 @@ describe("ShuffleOne", function () {
       for (let i = 0; i < AVAILABLE_SUPPLY.toNumber(); i++) {
         await raffle.connect(accounts[i]).buyTicket(ticketPaymentOver);
 
-        expect(await raffle.geSoldTickets()).to.be.equal(i + 1);
+        expect(await raffle.getSoldTickets()).to.be.equal(i + 1);
       }
     });
 
@@ -192,7 +192,7 @@ describe("ShuffleOne", function () {
       const accounts = await createWallets(AVAILABLE_SUPPLY - 1);
 
       console.log(await raffle.AVAILABLE_SUPPLY())
-      console.log(await raffle.geSoldTickets())
+      console.log(await raffle.getSoldTickets())
       await Promise.all(
         accounts
         .map(
@@ -200,7 +200,7 @@ describe("ShuffleOne", function () {
         )
       );
 
-      console.log(await raffle.geSoldTickets())
+      console.log(await raffle.getSoldTickets())
       expect(await raffle.isRaffleOpen()).to.be.equal(true)
       await raffle.buyTicket({value: MINT_COST})
       console.log(await raffle.AVAILABLE_SUPPLY())
@@ -208,23 +208,16 @@ describe("ShuffleOne", function () {
 
     });
 
-    it.only("Raffle closes after a certain block number", async () => {
+    it.only ("Raffle closes after a certain block number", async () => {
       // const accounts = await createWallets(AVAILABLE_SUPPLY - 1);
-
       expect(await raffle.isRaffleOpen()).to.be.equal(true)
       console.log(await raffle.RAFFLE_FINALIZATION_BLOCKNUMBER());
       await raffle.buyTicket({value: MINT_COST})
-
-      
       
       // advance 1000 blocks
       await hre.network.provider.send("hardhat_mine", ["0x3e6"]);
-      expect(await raffle.isRaffleOpen()).to.be.equal(true)
-      // advance 1000 blocks
-      await hre.network.provider.send("hardhat_mine", ["01"]);
     
       expect(await raffle.isRaffleOpen()).to.be.equal(false)
-
     });
 
 
