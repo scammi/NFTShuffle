@@ -14,7 +14,6 @@ const TicketView = ({ }: Props) => {
   const [canBuy, setCanBuy] = useState(false);
   const [canMint, setCanMint] = useState(false);
   const [canRequestRandomness, setCanRequestRandomness] = useState(false);
-  const [requestedRandomness, setRequestedRandomness] = useState(false);
 
   const [buyTransaction, setBuyTransaction] = useState();
   const [mintTransaction, setMintTransaction] = useState();

@@ -3,9 +3,9 @@ const { ethers, deployments } = require("hardhat");
 
 describe("ShuffleOne", function () {
 
-  let raffle, AVAILABLE_SUPPLY;
+  let raffle, vrfCoordinatorV2Mock, AVAILABLE_SUPPLY;
 
-  let MINT_COST = ethers.utils.parseEther("0.1")
+  let MINT_COST = ethers.utils.parseEther("0.1");
 
   const ticketPaymentOver = {
     value: MINT_COST
