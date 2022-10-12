@@ -22,30 +22,48 @@ const TicketView = ({ }: Props) => {
 
   useEffect(() => {
     (async () => {
-      const isOpen = await shuffleOne.isRaffleOpen();
-      const entropy = await shuffleOne.entropy();
-      const userTicket = await shuffleOne.participants(web3.wallet);
-      const maxPerAddress = await shuffleOne.MAX_PER_ADDRESS();
-      const requestedRandomness = await shuffleOne.getRequestId();
+      try {
+        const isOpen = await shuffleOne.isRaffleOpen();
+        const entropy = await shuffleOne.entropy();
+        const userTicket = await shuffleOne.participants(web3.wallet);
+        const maxPerAddress = await shuffleOne.MAX_PER_ADDRESS();
+        const requestedRandomness = await shuffleOne.getRequestId();
+        const maxSupply = await shuffleOne.AVAILABLE_SUPPLY();
 
-      // Can buy ?
-      setCanBuy(isOpen && (maxPerAddress.gt(userTicket.ownedTickets)));
+        const ticketsSold = await shuffleOne.getSoldTickets();
 
-      // Can mint ?
-      setCanMint(
-        !isOpen // Raffle is closed
-        && userTicket.minted.lt(userTicket.ownedTickets) // User has nfts to mint
-        && !requestedRandomness.isZero() // Randomness has not been 
-        && !entropy.isZero() // Has entropy
-      );
-
-      // Can request randomness
-      setCanRequestRandomness(requestedRandomness.isZero() && entropy.isZero())
-
-      // Ticket left
-      const ticketsSold = await shuffleOne.getSoldTickets();
-      const maxSupply = await shuffleOne.AVAILABLE_SUPPLY();
-      setTicketsLeft(maxSupply.sub(ticketsSold).toString());
+        console.log({
+          isOpen,
+          entropy,
+          maxSupply,
+          userTicket,
+          maxPerAddress,
+          requestedRandomness,
+        });
+  
+        // Can buy ?
+        setCanBuy(isOpen && (maxPerAddress.gt(userTicket.ownedTickets)));
+  
+        // Can mint ?
+        setCanMint(
+          !isOpen // Raffle is closed
+          && userTicket.minted.lt(userTicket.ownedTickets) // User has nfts to mint
+          && !requestedRandomness.isZero() // Randomness has not been 
+          && !entropy.isZero() // Has entropy
+        );
+  
+        // Can request randomness
+        setCanRequestRandomness(
+          requestedRandomness.isZero() 
+          && entropy.isZero()
+          && !isOpen
+        );
+  
+        // Ticket left
+        setTicketsLeft(maxSupply.sub(ticketsSold).toString());
+      } catch (e) {
+        console.log(e);
+      }
     })();
   }, [buyTransaction, mintTransaction, randomnessTransaction, web3]);
 

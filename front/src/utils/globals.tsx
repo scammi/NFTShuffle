@@ -9,7 +9,7 @@ const GLOBALS: GLOBALS = {
   CONTRACT_ADDRESSES: {
     shuffleOne: {
       // 1: '',
-      // 5: '',
+      5: '0xa761c583f2869280f203c4f92f7a5970165b94a1',
       31337: '0x0165878A594ca255338adfa4d48449f69242Eb8F',
     }
   }
