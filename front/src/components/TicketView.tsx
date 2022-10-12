@@ -23,10 +23,10 @@ const TicketView = ({ }: Props) => {
   useEffect(() => {
     (async () => {
       const isOpen = await shuffleOne.isRaffleOpen();
-      const requestedRandomness = await shuffleOne.getRequestId();
       const entropy = await shuffleOne.entropy();
-      const maxPerAddress = await shuffleOne.MAX_PER_ADDRESS();
       const userTicket = await shuffleOne.participants(web3.wallet);
+      const maxPerAddress = await shuffleOne.MAX_PER_ADDRESS();
+      const requestedRandomness = await shuffleOne.getRequestId();
 
       // Can buy ?
       setCanBuy(isOpen && (maxPerAddress.gt(userTicket.ownedTickets)));
@@ -96,11 +96,11 @@ const TicketView = ({ }: Props) => {
 
   return (
     <>
-      {(ticketsLeft > 0) ? `Tickets left ${ticketsLeft}` : 'Sold out! MINT !!!!'}
+      {(ticketsLeft > 0) ? `Tickets left ${ticketsLeft}` : 'Sold out !!!!'}
       <div>
         {canBuy && <BuyTicketButton /> || canMint && <MintTokenButton /> || canRequestRandomness && <RequestRandomnessButton />}
       </div>
-      {(!canBuy && !canMint) && 'Please be patient and wait for the raffle to end to mint :)'}
+      {(!canBuy && !canMint && canRequestRandomness) && 'Please be patient and wait for the raffle to end to mint :)'}
     </>
   );
 };

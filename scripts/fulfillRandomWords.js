@@ -1,10 +1,9 @@
 const { ethers } = require("hardhat");
 
-(async () => {
-  // await deployments.fixture(["ShuffleOne"]);
-  // const vrfCoordinatorV2Mock = await ethers.getContract("VRFCoordinatorV2Mock");
-  // console.log(vrfCoordinatorV2Mock);
+// RUN 
+// npx hardhat run --network localhost scripts/fulfillRandomWords.js
 
+(async () => {
   const shuffleOne = await ethers.getContract("ShuffleOne")
   const vrfCoordinatorV2Mock = await ethers.getContract("VRFCoordinatorV2Mock")
 
