@@ -114,7 +114,6 @@ export function Updater() {
     console.log(state);
 
     if (state.instance?.on) {
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>');
       const handleAccountsChanged = async (accounts) => {
         if (!_.isEmpty(accounts)) {
           const account = await _getConnectedAccount(state.instance);
