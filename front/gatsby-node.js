@@ -2,13 +2,13 @@ const webpack = require('webpack');
 
 exports.onCreateWebpackConfig = ({ stage, loaders, actions, plugins, getConfig }) => {
   // Fix process
-  // if (stage === 'build-javascript' || stage === 'develop') {
-  //   actions.setWebpackConfig({
-  //     plugins: [
-  //       plugins.provide({ process: 'process/browser' }),
-  //     ],
-  //   });
-  // }
+  if (stage === 'build-javascript' || stage === 'develop') {
+    actions.setWebpackConfig({
+      plugins: [
+        plugins.provide({ process: 'process/browser' }),
+      ],
+    });
+  }
 
   actions.setWebpackConfig({
     plugins: [

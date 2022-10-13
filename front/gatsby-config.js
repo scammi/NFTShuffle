@@ -1,4 +1,5 @@
 module.exports = {
+  pathPrefix: 'NFTShuffle/',
   siteMetadata: {
     title: `NFTshuffle`,
     description: `.`,

@@ -28,6 +28,12 @@ const TicketView = ({ }: Props) => {
       const maxPerAddress = await shuffleOne.MAX_PER_ADDRESS();
       const userTicket = await shuffleOne.participants(web3.wallet);
 
+      // Ticket left
+      const ticketsSold = await shuffleOne.getSoldTickets();
+      const maxSupply = await shuffleOne.AVAILABLE_SUPPLY();
+      const ticketLeft = maxSupply.sub(ticketsSold).toString();
+      setTicketsLeft(ticketLeft);
+
       // Can buy ?
       setCanBuy(isOpen && (maxPerAddress.gt(userTicket.ownedTickets)));
 
@@ -40,12 +46,20 @@ const TicketView = ({ }: Props) => {
       );
 
       // Can request randomness
-      setCanRequestRandomness(requestedRandomness.isZero() && entropy.isZero())
+      setCanRequestRandomness(requestedRandomness.isZero() && entropy.isZero() && (ticketLeft == 0));
 
-      // Ticket left
-      const ticketsSold = await shuffleOne.getSoldTickets();
-      const maxSupply = await shuffleOne.AVAILABLE_SUPPLY();
-      setTicketsLeft(maxSupply.sub(ticketsSold).toString());
+      console.log({
+        isOpen,
+        requestedRandomness,
+        entropy,
+        maxPerAddress,
+        userTicket,
+        ticketsSold,
+        maxSupply,
+        canBuy,
+        canMint,
+        cal: maxPerAddress.gt(userTicket.ownedTickets),
+      })
     })();
   }, [buyTransaction, mintTransaction, randomnessTransaction, web3]);
 
@@ -98,7 +112,12 @@ const TicketView = ({ }: Props) => {
     <>
       {(ticketsLeft > 0) ? `Tickets left ${ticketsLeft}` : 'Sold out! MINT !!!!'}
       <div>
-        {canBuy && <BuyTicketButton /> || canMint && <MintTokenButton /> || canRequestRandomness && <RequestRandomnessButton />}
+        { 
+          
+          canBuy && <BuyTicketButton /> 
+          || canMint && <MintTokenButton /> 
+          || canRequestRandomness && <RequestRandomnessButton />
+        }
       </div>
       {(!canBuy && !canMint) && 'Please be patient and wait for the raffle to end to mint :)'}
     </>
