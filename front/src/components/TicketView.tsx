@@ -119,7 +119,7 @@ const TicketView = ({ }: Props) => {
           || canRequestRandomness && <RequestRandomnessButton />
         }
       </div>
-      {(!canBuy && !canMint) && 'Please be patient and wait for the raffle to end to mint :)'}
+      {(!canBuy && !canMint) && 'On hoooodl !'}
     </>
   );
 };
