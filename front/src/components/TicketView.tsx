@@ -22,44 +22,48 @@ const TicketView = ({ }: Props) => {
 
   useEffect(() => {
     (async () => {
-      const isOpen = await shuffleOne.isRaffleOpen();
-      const requestedRandomness = await shuffleOne.getRequestId();
-      const entropy = await shuffleOne.entropy();
-      const maxPerAddress = await shuffleOne.MAX_PER_ADDRESS();
-      const userTicket = await shuffleOne.participants(web3.wallet);
-
-      // Ticket left
-      const ticketsSold = await shuffleOne.getSoldTickets();
-      const maxSupply = await shuffleOne.AVAILABLE_SUPPLY();
-      const ticketLeft = maxSupply.sub(ticketsSold).toString();
-      setTicketsLeft(ticketLeft);
-
-      // Can buy ?
-      setCanBuy(isOpen && (maxPerAddress.gt(userTicket.ownedTickets)));
-
-      // Can mint ?
-      setCanMint(
-        !isOpen // Raffle is closed
-        && userTicket.minted.lt(userTicket.ownedTickets) // User has nfts to mint
-        && !requestedRandomness.isZero() // Randomness has not been 
-        && !entropy.isZero() // Has entropy
-      );
-
-      // Can request randomness
-      setCanRequestRandomness(requestedRandomness.isZero() && entropy.isZero() && (ticketLeft == 0));
-
-      console.log({
-        isOpen,
-        requestedRandomness,
-        entropy,
-        maxPerAddress,
-        userTicket,
-        ticketsSold,
-        maxSupply,
-        canBuy,
-        canMint,
-        cal: maxPerAddress.gt(userTicket.ownedTickets),
-      })
+      try {
+        const isOpen = await shuffleOne.isRaffleOpen();
+        const requestedRandomness = await shuffleOne.getRequestId();
+        const entropy = await shuffleOne.entropy();
+        const maxPerAddress = await shuffleOne.MAX_PER_ADDRESS();
+        const userTicket = await shuffleOne.participants(web3.wallet);
+  
+        // Ticket left
+        const ticketsSold = await shuffleOne.getSoldTickets();
+        const maxSupply = await shuffleOne.AVAILABLE_SUPPLY();
+        const ticketLeft = maxSupply.sub(ticketsSold).toString();
+        setTicketsLeft(ticketLeft);
+  
+        // Can buy ?
+        setCanBuy(isOpen && (maxPerAddress.gt(userTicket.ownedTickets)));
+  
+        // Can mint ?
+        setCanMint(
+          !isOpen // Raffle is closed
+          && userTicket.minted.lt(userTicket.ownedTickets) // User has nfts to mint
+          && !requestedRandomness.isZero() // Randomness has not been 
+          && !entropy.isZero() // Has entropy
+        );
+  
+        // Can request randomness
+        setCanRequestRandomness(requestedRandomness.isZero() && entropy.isZero() && (ticketLeft == 0));
+  
+        console.log({
+          isOpen,
+          requestedRandomness,
+          entropy,
+          maxPerAddress,
+          userTicket,
+          ticketsSold,
+          maxSupply,
+          canBuy,
+          canMint,
+          cal: maxPerAddress.gt(userTicket.ownedTickets),
+        });
+      } catch (e) {
+        console.log(e);
+      };
     })();
   }, [buyTransaction, mintTransaction, randomnessTransaction, web3]);
 
@@ -110,7 +114,7 @@ const TicketView = ({ }: Props) => {
 
   return (
     <>
-      {(ticketsLeft > 0) ? `Tickets left ${ticketsLeft}` : 'Sold out! MINT !!!!'}
+      {(ticketsLeft > 0) ? `Tickets left ${ticketsLeft}` : 'Sold out !!!!'}
       <div>
         { 
           
@@ -119,7 +123,11 @@ const TicketView = ({ }: Props) => {
           || canRequestRandomness && <RequestRandomnessButton />
         }
       </div>
+<<<<<<< HEAD
       {(!canBuy && !canMint) && 'On hoooodl !'}
+=======
+      {(!canBuy && !canMint && canRequestRandomness) && 'Please be patient and wait for the raffle to end to mint :)'}
+>>>>>>> aa1af36ad45e953776617236d2fde00933cd398a
     </>
   );
 };
