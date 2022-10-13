@@ -15,7 +15,7 @@ const IndexPage = () => {
     const supportedNetworks = Object.keys(GLOBALS.CONTRACT_ADDRESSES.shuffleOne);
     return supportedNetworks.includes(String(web3.chainId));
   };
-  isNetworkSupported();
+
   return (
     <Layout>
       <Seo title="Home" />

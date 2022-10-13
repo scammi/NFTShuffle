@@ -2,13 +2,13 @@ const webpack = require('webpack');
 
 exports.onCreateWebpackConfig = ({ stage, loaders, actions, plugins, getConfig }) => {
   // Fix process
-  if (stage === 'build-javascript' || stage === 'develop') {
-    actions.setWebpackConfig({
-      plugins: [
-        plugins.provide({ process: 'process/browser' }),
-      ],
-    });
-  }
+  // if (stage === 'build-javascript' || stage === 'develop') {
+  //   actions.setWebpackConfig({
+  //     plugins: [
+  //       plugins.provide({ process: 'process/browser' }),
+  //     ],
+  //   });
+  // }
 
   actions.setWebpackConfig({
     plugins: [
@@ -43,37 +43,13 @@ exports.onCreateWebpackConfig = ({ stage, loaders, actions, plugins, getConfig }
             test: /react-graceful-image/,
             use: loaders.null(),
           },
+          {
+            test: /web3modal/,
+            use: loaders.null(),
+          },
         ],
       },
     });
   }
 
-  if (stage === 'build-html') {
-    actions.setWebpackConfig({
-      // Don't bundle modules that reference browser globals such as `window` and `IDBIndex` during SSR.
-      // See: https://github.com/gatsbyjs/gatsby/issues/17725
-      externals: getConfig().externals.concat(function ({ context, request }, callback) {
-        // Exclude bundling firebase* and react-firebase*
-        // These are instead required at runtime.
-        if (/^@?firebase(\/(.+))?/.test(request)) {
-          console.log('Excluding bundling of: ' + request);
-          return callback(null, 'commonjs ' + request);
-        }
-        callback();
-      }),
-    });
-  }
-
-  // if (stage === 'build-html') {
-  //     actions.setWebpackConfig({
-  //         module: {
-  //             rules: [
-  //                 {
-  //                     test: /portis\.js|authereum\.js|fortmatic\.js|torus-embed|qrcode-modal|walletconnect/,
-  //                     use: loaders.null(),
-  //                 },
-  //             ],
-  //         },
-  //     });
-  // }
 };
