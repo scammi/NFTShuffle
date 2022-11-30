@@ -33,9 +33,9 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     /// ============ Immutable storage ============
 
     /// @notice Blocknumber raffle ends at.
-    uint256 public immutable RAFFLE_FINALIZATION_BLOCKNUMBER;
+    uint256 public immutable FINALIZATION_BLOCKNUMBER;
     /// @notice Avalible NFTs to be minted
-    uint256 public immutable AVAILABLE_SUPPLY;
+    uint256 public immutable TICKETS_AMOUNT;
     /// @notice Minimum cost for ticket
     uint256 public immutable MINT_COST;
     /// @notice Maximum tickets per address
@@ -58,6 +58,7 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     // VRF v2
     bytes32 internal immutable _keyHash;
     uint64 internal immutable _subId;
+    address internal immutable _vrfCoordinator;
     
     uint256 internal _requestId;
 
@@ -86,19 +87,20 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
         address vrfCoordinator,
         bytes32 keyHash,
         uint64 subId,
-        uint256 _AVAILABLE_SUPPLY,
+        uint256 _TICKETS_AMOUNT,
         uint256 _MINT_COST,
-        uint256 _RAFFLE_BLOCKS_DURATION
+        uint256 _FINALIZATION_BLOCKNUMBER
     )
         ERC721("Random NFT", "rNFT")
         VRFConsumerBaseV2(vrfCoordinator)
     {
-        AVAILABLE_SUPPLY = _AVAILABLE_SUPPLY;
+        TICKETS_AMOUNT = _TICKETS_AMOUNT;
         MINT_COST = _MINT_COST;
-        RAFFLE_FINALIZATION_BLOCKNUMBER = block.number + _RAFFLE_BLOCKS_DURATION; 
+        FINALIZATION_BLOCKNUMBER = _FINALIZATION_BLOCKNUMBER; 
 
         _keyHash = keyHash;
         _subId = subId;
+        _vrfCoordinator = vrfCoordinator;
     }
 
     /// ============ Functions ============
@@ -106,13 +108,13 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     /// @notice Enters raffle 
     function buyTicket() external payable {
         // Ensure there are tickets to be sell
-        require(_soldTicketsCounter.current() < AVAILABLE_SUPPLY, "All tickets sold");
+        require(_soldTicketsCounter.current() < TICKETS_AMOUNT, "All tickets sold");
         // Ensure participant owns no more than allow
         require(participants[msg.sender].ownedTickets < MAX_PER_ADDRESS, "Address owns ticket");
         // Ensure sufficient raffle ticket payment
         require(msg.value >= MINT_COST, "Insufficient payment");
         // Ensure raffle is open
-        require(block.number <= RAFFLE_FINALIZATION_BLOCKNUMBER, "Raffle has ended");
+        require(block.number <= FINALIZATION_BLOCKNUMBER, "Raffle has ended");
 
         // Participant gets ticket
         participants[msg.sender].ownedTickets++;
@@ -128,10 +130,12 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     }
 
     function requestRandomness() external {
+        // This can be set only.
+
         require(_requestId == 0, 'random already requested');
         require(!isRaffleOpen(), "Raffle still open");
 
-        _requestId = VRFCoordinatorV2Interface(vrfCoordinator).requestRandomWords(
+        _requestId = VRFCoordinatorV2Interface(_vrfCoordinator).requestRandomWords(
             _keyHash, _subId, MINIMUM_CONFIRMATIONS, CALLBACK_GAS_LIMIT, WORDS_AMOUNT
         );
     }
@@ -232,7 +236,7 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     function isRaffleOpen() public view returns (bool) {
         if (
             _soldTicketsCounter.current() < AVAILABLE_SUPPLY && 
-            block.number <= RAFFLE_FINALIZATION_BLOCKNUMBER
+            block.number <= FINALIZATION_BLOCKNUMBER
         ) { 
             return true; 
         } else {
