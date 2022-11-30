@@ -1,22 +1,27 @@
-const {
+import {
   networkConfig,
   RAFFLE_FINALIZATION_BLOCKNUMBER
-} = require("../helper-hardhat-config")
+} from "../helper-hardhat-config"
 
+import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-module.exports = async function (hre) {
-  const {deployments, getNamedAccounts, ethers, network} = hre;
+const deployFunc = async function(hre: HardhatRuntimeEnvironment) {
+  const {deployments, getNamedAccounts, ethers, network, getChainId } = hre;
   const {deploy} = deployments;
 
-  const {deployer} = await getNamedAccounts();
+  const {deployer, admin, coordinator} = await getNamedAccounts();
+  
 
-  const chainId = network.config.chainId
+  const chainId = await getChainId()
+    
+  let vrfCoordinatorAddress = coordinator
+  
+  let subscriptionId
 
-  VRFCoordinatorV2MockDeployment = await deployments.get('VRFCoordinatorV2Mock')
-  vrfCoordinatorAddress = VRFCoordinatorV2MockDeployment.address
-  VRFCoordinatorV2Mock = await ethers.getContractAt(VRFCoordinatorV2MockDeployment.abi, VRFCoordinatorV2MockDeployment.address)
-
-  if (chainId == 31337) {
+  if (chainId == "31337") {
+    const VRFCoordinatorV2MockDeployment = await deployments.get('VRFCoordinatorV2Mock')
+    vrfCoordinatorAddress = VRFCoordinatorV2MockDeployment.address
+    const VRFCoordinatorV2Mock = await ethers.getContractAt(VRFCoordinatorV2MockDeployment.abi, VRFCoordinatorV2MockDeployment.address)
     const fundAmount = networkConfig[chainId]["fundAmount"]
     const transaction = await VRFCoordinatorV2Mock.createSubscription()
     const transactionReceipt = await transaction.wait(1)
@@ -34,7 +39,7 @@ module.exports = async function (hre) {
       vrfCoordinatorAddress,
       networkConfig[chainId].keyHash,
       subscriptionId,
-      1, // max supply
+      5, // max supply
       ethers.utils.parseEther("0.1"),
       RAFFLE_FINALIZATION_BLOCKNUMBER // BIDDING_BLOCKS_LENGTH
     ],
@@ -42,4 +47,5 @@ module.exports = async function (hre) {
   });
 };
 
-module.exports.tags = ['ShuffleOne'];
+deployFunc.tags = ["ShuffleOne"]
+module.exports =  deployFunc
