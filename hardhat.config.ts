@@ -1,6 +1,12 @@
-require("@nomiclabs/hardhat-ethers");
-require("hardhat-deploy");
-require("@nomiclabs/hardhat-waffle");
+import '@typechain/hardhat'
+import '@nomiclabs/hardhat-ethers'
+import '@nomiclabs/hardhat-waffle'
+import "hardhat-deploy";
+
+import dotenv from "dotenv"
+
+dotenv.config();
+
 
 module.exports = {
   solidity: {
