@@ -30,6 +30,12 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
         uint256 ownedTickets; 
     }
 
+    struct Participant2 {
+        // address addr;
+        uint40 timestamp;
+        uint32 redeemableTickets;
+    }
+
     /// ============ Immutable storage ============
 
     /// @notice Blocknumber raffle ends at.
@@ -44,7 +50,7 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     /// ============ Mutable storage ============
 
     /// @notice Keep track of participants 
-    mapping (address => Participant) public participants;
+    mapping (address => Participant2) public participants;
     /// @notice Array of NFTs ID to be minted 
     uint256[] public NFTsId;
     /// @notice Source of entropy
@@ -78,11 +84,12 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     /// @param tokenId Number of the ticket sold
     event Minted(address indexed user, uint256 tokenId);
 
+    /// ============ Errors ============
+    // error 
+
     /// ============ Constructor ============
 
     /// @notice Creates a new NFT distribution contract
-    /// @param _AVAILABLE_SUPPLY total NFTs to sell
-    /// @param _MINT_COST in wei per ticket
     constructor(
         address vrfCoordinator,
         bytes32 keyHash,
@@ -96,7 +103,7 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     {
         TICKETS_AMOUNT = _TICKETS_AMOUNT;
         MINT_COST = _MINT_COST;
-        FINALIZATION_BLOCKNUMBER = _FINALIZATION_BLOCKNUMBER; 
+        FINALIZATION_BLOCKNUMBER = block.number + _FINALIZATION_BLOCKNUMBER; 
 
         _keyHash = keyHash;
         _subId = subId;
@@ -110,14 +117,15 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
         // Ensure there are tickets to be sell
         require(_soldTicketsCounter.current() < TICKETS_AMOUNT, "All tickets sold");
         // Ensure participant owns no more than allow
-        require(participants[msg.sender].ownedTickets < MAX_PER_ADDRESS, "Address owns ticket");
+        require(participants[msg.sender].redeemableTickets < MAX_PER_ADDRESS, "Address owns ticket");
         // Ensure sufficient raffle ticket payment
         require(msg.value >= MINT_COST, "Insufficient payment");
         // Ensure raffle is open
         require(block.number <= FINALIZATION_BLOCKNUMBER, "Raffle has ended");
 
         // Participant gets ticket
-        participants[msg.sender].ownedTickets++;
+        // participants[msg.sender].ownedTickets++;
+        participants[msg.sender].redeemableTickets++;
         
         // Total sold tickets counter updated
         _soldTicketsCounter.increment();
@@ -155,14 +163,17 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
 
     /// @notice Generate rand index for the NFTid, mint NFT and remove it from array 
     function mint() public {
-        // Ensure participant owns ticket
-        require(participants[msg.sender].ownedTickets > 0, "Address does not own a ticket");
-        // Ensure minted amount < max allow
-        require(participants[msg.sender].minted < MAX_PER_ADDRESS, "Max allow per address minted");
         // Ensure raffle is closed
         require(!isRaffleOpen(), "Raffle still open");
         // Ensure entropy is set
         require(entropy != 0, "Entropy is not set");
+
+        // // Ensure participant owns ticket
+        // require(participants[msg.sender].ownedTickets > 0, "Address does not own a ticket");
+        // // Ensure minted amount < max allow
+        // require(participants[msg.sender].minted < MAX_PER_ADDRESS, "Max allow per address minted");
+
+        require(participants[msg.sender].redeemableTickets > 0, "caller have 0 redeemable tickets");
 
         // Pick index from NFTsIds
         uint256 randomIndex = getRandomIndex();
@@ -176,10 +187,11 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
         // Remove minted ID from NFTsIds array
         removeIndexFromArray(randomIndex);
         // Update participants data
-        participants[msg.sender].randomIndex = randomIndex;
-        participants[msg.sender].tokenId = randomNFTsId;
-        participants[msg.sender].ownedTickets--;
-        participants[msg.sender].minted++;
+        // participants[msg.sender].randomIndex = randomIndex;
+        // participants[msg.sender].tokenId = randomNFTsId;
+        // participants[msg.sender].ownedTickets--;
+        // participants[msg.sender].minted++;
+        participants[msg.sender].redeemableTickets--;
 
         // Emit minted NFT
         emit Minted(msg.sender, randomNFTsId);
@@ -235,7 +247,7 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
 
     function isRaffleOpen() public view returns (bool) {
         if (
-            _soldTicketsCounter.current() < AVAILABLE_SUPPLY && 
+            _soldTicketsCounter.current() < TICKETS_AMOUNT && 
             block.number <= FINALIZATION_BLOCKNUMBER
         ) { 
             return true; 
