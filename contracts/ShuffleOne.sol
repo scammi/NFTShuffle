@@ -16,6 +16,13 @@ import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     using Counters for Counters.Counter;
 
+    enum Status {
+        OPEN
+        CLOSED
+        REQUESTING
+        FINISHED
+    }
+
     /// ============ Structs ============
     
     /// @notice Users participants data
@@ -254,5 +261,18 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
         } else {
             return false;
         }
+    }
+
+    function getStatus() public view returns (Status status) {
+        if (entropy != 0) {
+            status = Status.FINISHED;
+        } else if (_requestId != 0) {
+            status = Status.REQUESTING;
+        } else if (_soldTicketsCounter.current() >= TICKETS_AMOUNT || block.number >> FINALIZATION_BLOCKNUMBER) {
+            status = Status.CLOSED;
+        } else {
+            status = Status.OPEN;
+        }
+        
     }
 }
