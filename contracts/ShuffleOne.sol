@@ -15,9 +15,9 @@ import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
 
     enum Status {
-        OPEN
-        CLOSED
-        REQUESTING
+        OPEN,
+        CLOSED,
+        REQUESTING,
         FINISHED
     }
 
@@ -120,11 +120,11 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     /// @notice Enters raffle 
     function buyTicket() external payable {
         // Ensure there are tickets to be sell
-        require(_soldTicketsCounter.current() < TICKETS_AMOUNT, "All tickets sold");
+        require(_soldTicketsCounter < TICKETS_AMOUNT, "All tickets sold");
         // Ensure participant owns no more than allow
         require(participants[msg.sender].redeemableTickets < MAX_PER_ADDRESS, "Address owns ticket");
         // Ensure sufficient raffle ticket payment
-        require(msg.value >= MINT_COST, "Insufficient payment");
+        require(msg.value == MINT_COST, "Insufficient payment");
         // Ensure raffle is open
         require(block.number <= FINALIZATION_BLOCKNUMBER, "Raffle has ended");
 
@@ -251,7 +251,7 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     }
 
     function isRaffleOpen() internal view returns (bool) {
-        return _soldTicketsCounter < TICKETS_AMOUNT && block.number <= FINALIZATION_BLOCKNUMBER
+        return _soldTicketsCounter < TICKETS_AMOUNT && block.number <= FINALIZATION_BLOCKNUMBER;
     }
 
     function getStatus() public view returns (Status status) {
@@ -259,7 +259,7 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
             status = Status.FINISHED;
         } else if (_requestId != 0) {
             status = Status.REQUESTING;
-        } else if (_soldTicketsCounter >= TICKETS_AMOUNT || block.number >> FINALIZATION_BLOCKNUMBER) {
+        } else if (_soldTicketsCounter >= TICKETS_AMOUNT || block.number >= FINALIZATION_BLOCKNUMBER) {
             status = Status.CLOSED;
         } else {
             status = Status.OPEN;
