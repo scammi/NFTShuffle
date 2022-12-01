@@ -5,7 +5,6 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol"; //OZ: ERC721
 import "@openzeppelin/contracts/access/Ownable.sol"; // OZ: Ownership
-import "@openzeppelin/contracts/utils/Counters.sol"; //OZ: Counter
 
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
@@ -14,7 +13,6 @@ import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 /// @author Rloot
 /// @notice ERC721 randomized distribution
 contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
-    using Counters for Counters.Counter;
 
     enum Status {
         OPEN
@@ -66,7 +64,7 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     bool public proceedsClaimed = false;
 
     /// @notice Keeps track of sold tickets 
-    Counters.Counter internal _soldTicketsCounter;
+    uint256 internal _soldTicketsCounter;
 
     // VRF v2
     bytes32 internal immutable _keyHash;
@@ -135,13 +133,13 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
         participants[msg.sender].redeemableTickets++;
         
         // Total sold tickets counter updated
-        _soldTicketsCounter.increment();
+        _soldTicketsCounter++;
 
         // Add NFT ID to be minted
-        NFTsId.push(_soldTicketsCounter.current()); 
+        NFTsId.push(_soldTicketsCounter); 
         
         // Emmit succesfull entry
-        emit TicketSold(msg.sender, _soldTicketsCounter.current());
+        emit TicketSold(msg.sender, _soldTicketsCounter);
     }
 
     function requestRandomness() external {
@@ -230,7 +228,7 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
 
     /// @notice Get total numbers of tickets sold 
     function getSoldTickets() public view returns (uint256) {
-        return _soldTicketsCounter.current();
+        return _soldTicketsCounter;
     }
 
     /// @notice Allows contract owner to withdraw proceeds of tickets
@@ -252,15 +250,8 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
         return "https://ipfs.io/ipfs/QmQxDjEhnYP6QAtLRyLV9N7dn1kDigz7iWnx5psmyXqy35/";
     }
 
-    function isRaffleOpen() public view returns (bool) {
-        if (
-            _soldTicketsCounter.current() < TICKETS_AMOUNT && 
-            block.number <= FINALIZATION_BLOCKNUMBER
-        ) { 
-            return true; 
-        } else {
-            return false;
-        }
+    function isRaffleOpen() internal view returns (bool) {
+        return _soldTicketsCounter < TICKETS_AMOUNT && block.number <= FINALIZATION_BLOCKNUMBER
     }
 
     function getStatus() public view returns (Status status) {
@@ -268,7 +259,7 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
             status = Status.FINISHED;
         } else if (_requestId != 0) {
             status = Status.REQUESTING;
-        } else if (_soldTicketsCounter.current() >= TICKETS_AMOUNT || block.number >> FINALIZATION_BLOCKNUMBER) {
+        } else if (_soldTicketsCounter >= TICKETS_AMOUNT || block.number >> FINALIZATION_BLOCKNUMBER) {
             status = Status.CLOSED;
         } else {
             status = Status.OPEN;
