@@ -11,8 +11,8 @@ import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 
 import "./RandomArray.sol";
 
-/// @title ShuffleOne
-/// @author Rloot
+/// @title SingleShuffle
+/// @author rloot
 /// @notice ERC721 randomized distribution
 contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
 
@@ -58,12 +58,13 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
 
     /// @notice Keep track of participants 
     mapping (address => Participant2) public participants;
-    /// @notice Array of NFTs ID to be minted 
-    uint256[] public tickets;
+    /// @notice Array of participant addresses 
+    address[] public tickets;
+    uint256[] public NFTsId;
 
     /// @notice Source of entropy
     uint256 public _entropy;
-    
+
     /// @notice Owner has claimed raffle proceeds
     bool public proceedsClaimed = false;
 
@@ -99,14 +100,14 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     error NotEnoughEther();
     error NoRedeemableTickets();
 
-    error RaffleStillOpen();
-    error RaffleHasEnded();
+    error RaffleStillOpen(); // same as open
+    error RaffleHasEnded(); // same as closed
 
-    error RandomnessAlreadyRequested();
+    error RandomnessAlreadyRequested(); // same as requesting
     error InvalidRequestId();
 
-    error EntropyNotSet();
-    error EntropyAlreadySet();
+    error EntropyNotSet(); // same as not requesting
+    error EntropyAlreadySet(); // same as finished
 
     /// ============ Constructor ============
 
@@ -137,7 +138,7 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     function buyTicket() external payable {
         // Ensure there are tickets to be sell
         // require(_soldTicketsCounter < TICKETS_AMOUNT, "All tickets sold");
-        if (_soldTicketsCounter >= TICKETS_AMOUNT) {
+        if (_soldTicketsCounter > TICKETS_AMOUNT) {
             revert TicketsSoldOut();
         }
         // Ensure participant owns no more than allow
@@ -163,8 +164,9 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
         _soldTicketsCounter++;
 
         // Add NFT ID to be minted
-        NFTsId.push(_soldTicketsCounter); 
-        
+        // NFTsId.push(_soldTicketsCounter); 
+        tickets.push(msg.sender);
+
         // Emmit succesfull entry
         emit TicketSold(msg.sender, _soldTicketsCounter);
     }
@@ -173,7 +175,7 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
         if (_requestId != 0) {
             revert RandomnessAlreadyRequested();
         }
-        if (isRaffleOpen()) {
+        if (isOpen()) {
             revert RaffleStillOpen();
         }
         // require(_requestId == 0, 'random already requested');
@@ -211,10 +213,15 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
         // require(!isRaffleOpen(), "Raffle still open");
         // no need to check if the raffle is open, we can rely only on entropy != 0.
 
+
         // Ensure entropy is set
         if (_entropy == 0) {
             revert EntropyNotSet();
         }
+
+        // if (_tickets[ticket] != msg.sender) {
+        //     revert();
+        // }
 
         // // Ensure participant owns ticket
         // require(participants[msg.sender].ownedTickets > 0, "Address does not own a ticket");
@@ -225,7 +232,7 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
         if (participants[msg.sender].redeemableTickets == 0) {
             revert NoRedeemableTickets();
         }
-        
+
         // Pick index from NFTsIds
         uint256 randomIndex = RandomArray.getNextRandomIndex(NFTsId, _entropy);
         
@@ -236,7 +243,7 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
         _mint(msg.sender, randomNFTsId);
 
         // Remove minted ID from NFTsIds array
-        RandomArray.removeIndexFromArray(NFTsId, randomIndex);
+        // RandomArray.removeIndexFromArray(NFTsId, randomIndex);
         // removeIndexFromArray(randomIndex);
 
         // Update participants data
@@ -251,10 +258,10 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
         emit Minted(msg.sender, randomNFTsId);
     }
 
-    /// @notice Get the lengths of the NFTsIds array
-    function getNFTsIdLength() public view returns (uint256) {
-        return NFTsId.length;
-    }
+    // /// @notice Get the lengths of the NFTsIds array
+    // function getNFTsIdLength() public view returns (uint256) {
+    //     return NFTsId.length;
+    // }
 
     /// @notice Get total numbers of tickets sold 
     function getSoldTickets() public view returns (uint256) {
@@ -277,8 +284,16 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
         return "https://ipfs.io/ipfs/QmQxDjEhnYP6QAtLRyLV9N7dn1kDigz7iWnx5psmyXqy35/";
     }
 
-    function isRaffleOpen() internal view returns (bool) {
+    function isOpen() internal view returns (bool) {
         return _soldTicketsCounter < TICKETS_AMOUNT && block.number <= FINALIZATION_BLOCKNUMBER;
+    }
+
+    function isClosed() internal view returns (bool) {
+        return _soldTicketsCounter >= TICKETS_AMOUNT && block.number <= FINALIZATION_BLOCKNUMBER;
+    }
+
+    function isFinished() internal view returns (bool) {
+        return _entropy != 0;
     }
 
     // open => closed => requesting => finished
