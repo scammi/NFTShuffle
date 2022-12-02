@@ -9,6 +9,8 @@ import "@openzeppelin/contracts/access/Ownable.sol"; // OZ: Ownership
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 
+import "./RandomArray.sol";
+
 /// @title ShuffleOne
 /// @author Rloot
 /// @notice ERC721 randomized distribution
@@ -57,9 +59,11 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     /// @notice Keep track of participants 
     mapping (address => Participant2) public participants;
     /// @notice Array of NFTs ID to be minted 
-    uint256[] public NFTsId;
+    uint256[] public tickets;
+
     /// @notice Source of entropy
-    uint256 public entropy;
+    uint256 public _entropy;
+    
     /// @notice Owner has claimed raffle proceeds
     bool public proceedsClaimed = false;
 
@@ -192,12 +196,12 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
         if (_requestId != requestId) {
             revert InvalidRequestId();
         }
-        if (entropy != 0) {
+        if (_entropy != 0) {
             revert EntropyAlreadySet();
         }
 
         // set entropy
-        entropy = randomWords[0];
+        _entropy = randomWords[0];
     }
 
 
@@ -206,9 +210,9 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
         // Ensure raffle is closed
         // require(!isRaffleOpen(), "Raffle still open");
         // no need to check if the raffle is open, we can rely only on entropy != 0.
+
         // Ensure entropy is set
-        // require(entropy != 0, "Entropy is not set");
-        if (entropy == 0) {
+        if (_entropy == 0) {
             revert EntropyNotSet();
         }
 
@@ -223,7 +227,7 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
         }
         
         // Pick index from NFTsIds
-        uint256 randomIndex = getRandomIndex();
+        uint256 randomIndex = RandomArray.getNextRandomIndex(NFTsId, _entropy);
         
         // Get random ID value from NFTsIds
         uint256 randomNFTsId = NFTsId[randomIndex];
@@ -232,35 +236,19 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
         _mint(msg.sender, randomNFTsId);
 
         // Remove minted ID from NFTsIds array
-        removeIndexFromArray(randomIndex);
+        RandomArray.removeIndexFromArray(NFTsId, randomIndex);
+        // removeIndexFromArray(randomIndex);
+
         // Update participants data
         // participants[msg.sender].randomIndex = randomIndex;
         // participants[msg.sender].tokenId = randomNFTsId;
         // participants[msg.sender].ownedTickets--;
         // participants[msg.sender].minted++;
+
         participants[msg.sender].redeemableTickets--;
 
         // Emit minted NFT
         emit Minted(msg.sender, randomNFTsId);
-    }
-
-    /// @notice Get a random index from the NFTsId array 
-    function getRandomIndex() internal view returns (uint) {
-        // Picks a random index between 0 and NFTsIDs length
-        return entropy % NFTsId.length;
-    }
-
-    /// @notice Delete minted id from array, gas efficient, no re-ordering of indexs
-    /// @param index element to be deleted from NFTsId after bein minted
-    function removeIndexFromArray(uint index) internal {
-        // Ensure to avoid removing and not existing index
-        require(index < NFTsId.length);
-
-        // Move the last element to the index of the deleted one 
-        NFTsId[index] = NFTsId[NFTsId.length-1];
-
-        // Remove last element
-        NFTsId.pop();
     }
 
     /// @notice Get the lengths of the NFTsIds array
@@ -275,10 +263,6 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
 
     /// @notice Allows contract owner to withdraw proceeds of tickets
     function withdrawTo(address to) external onlyOwner {
-        // Ensure raffle has ended
-        // require(!isRaffleOpen(), "Raffle still open");        // Ensure proceeds have not already been claimed
-        // require(!proceedsClaimed, "Proceeds already claimed");
-
         // if (getStatus() != Status.FINISHED) {
         //     revert 'cant withdraw'
         // }
@@ -299,7 +283,7 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
 
     // open => closed => requesting => finished
     function getStatus() public view returns (Status status) {
-        if (entropy != 0) {
+        if (_entropy != 0) {
             status = Status.FINISHED;
         } else if (_requestId != 0) {
             status = Status.REQUESTING;
