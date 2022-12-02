@@ -137,27 +137,22 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     /// @notice Enters raffle 
     function buyTicket() external payable {
         // Ensure there are tickets to be sell
-        // require(_soldTicketsCounter < TICKETS_AMOUNT, "All tickets sold");
         if (_soldTicketsCounter > TICKETS_AMOUNT) {
             revert TicketsSoldOut();
         }
         // Ensure participant owns no more than allow
-        // require(participants[msg.sender].redeemableTickets < MAX_PER_ADDRESS, "Address owns ticket");
         if (participants[msg.sender].redeemableTickets >= MAX_PER_ADDRESS) {
             revert MaxTicketsPerAddress();
         }
         // Ensure sufficient raffle ticket payment
-        // require(msg.value == MINT_COST, "Insufficient payment");
         if (msg.value != MINT_COST) {
             revert NotEnoughEther();
         }
         // Ensure raffle is open
-        // require(block.number <= FINALIZATION_BLOCKNUMBER, "Raffle has ended");
         if (block.number >= FINALIZATION_BLOCKNUMBER) {
             revert RaffleHasEnded();
         }
         // Participant gets ticket
-        // participants[msg.sender].ownedTickets++;
         participants[msg.sender].redeemableTickets++;
         
         // Total sold tickets counter updated
@@ -178,8 +173,6 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
         if (isOpen()) {
             revert RaffleStillOpen();
         }
-        // require(_requestId == 0, 'random already requested');
-        // require(!isRaffleOpen(), "Raffle still open");
 
         // This can be set only once.
         _requestId = VRFCoordinatorV2Interface(_vrfCoordinator).requestRandomWords(
@@ -193,8 +186,6 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
 
     function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords) internal override {
         // verify requestId
-        // require(_requestId == requestId, "requestId do not match");
-        // require(entropy == 0, "entropy already set");
         if (_requestId != requestId) {
             revert InvalidRequestId();
         }
@@ -209,11 +200,6 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
 
     /// @notice Generate rand index for the NFTid, mint NFT and remove it from array 
     function mint() public {
-        // Ensure raffle is closed
-        // require(!isRaffleOpen(), "Raffle still open");
-        // no need to check if the raffle is open, we can rely only on entropy != 0.
-
-
         // Ensure entropy is set
         if (_entropy == 0) {
             revert EntropyNotSet();
