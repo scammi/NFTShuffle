@@ -189,6 +189,7 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
         if (_requestId != requestId) {
             revert InvalidRequestId();
         }
+
         if (_entropy != 0) {
             revert EntropyAlreadySet();
         }
@@ -199,55 +200,34 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
 
 
     /// @notice Generate rand index for the NFTid, mint NFT and remove it from array 
-    function mint() public {
+    function mint(uint256 ticket) public {
         // Ensure entropy is set
         if (_entropy == 0) {
             revert EntropyNotSet();
         }
-
-        // if (_tickets[ticket] != msg.sender) {
-        //     revert();
-        // }
-
-        // // Ensure participant owns ticket
-        // require(participants[msg.sender].ownedTickets > 0, "Address does not own a ticket");
-        // // Ensure minted amount < max allow
-        // require(participants[msg.sender].minted < MAX_PER_ADDRESS, "Max allow per address minted");
-
-        // require(participants[msg.sender].redeemableTickets > 0, "caller have 0 redeemable tickets");
+        
         if (participants[msg.sender].redeemableTickets == 0) {
             revert NoRedeemableTickets();
         }
+        if (tickets[ticket] != msg.sender) {
+            revert();
+        }
 
         // Pick index from NFTsIds
-        uint256 randomIndex = RandomArray.getNextRandomIndex(NFTsId, _entropy);
-        
-        // Get random ID value from NFTsIds
-        uint256 randomNFTsId = NFTsId[randomIndex];
+        // uint256 randomIndex = RandomArray.getNextRandomIndex(NFTsId, _entropy);
+        uint256 randomIndex = RandomArray.getNextRandomIndex(tickets, _entropy, ticket);
 
         // Mint random NFT
-        _mint(msg.sender, randomNFTsId);
-
-        // Remove minted ID from NFTsIds array
-        // RandomArray.removeIndexFromArray(NFTsId, randomIndex);
-        // removeIndexFromArray(randomIndex);
-
-        // Update participants data
-        // participants[msg.sender].randomIndex = randomIndex;
-        // participants[msg.sender].tokenId = randomNFTsId;
-        // participants[msg.sender].ownedTickets--;
-        // participants[msg.sender].minted++;
+        _mint(msg.sender, randomIndex);
 
         participants[msg.sender].redeemableTickets--;
 
-        // Emit minted NFT
-        emit Minted(msg.sender, randomNFTsId);
-    }
+        // todo : if we store `tickets.length` when raffle is closed
+        //         i think we can remove the element from the array of tickets 
 
-    // /// @notice Get the lengths of the NFTsIds array
-    // function getNFTsIdLength() public view returns (uint256) {
-    //     return NFTsId.length;
-    // }
+        // Emit minted NFT
+        emit Minted(msg.sender, randomIndex);
+    }
 
     /// @notice Get total numbers of tickets sold 
     function getSoldTickets() public view returns (uint256) {

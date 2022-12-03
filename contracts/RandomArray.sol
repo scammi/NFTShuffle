@@ -13,6 +13,14 @@ library RandomArray {
         return entropy % array.length;
     }
 
+    /// @notice Get a random index from the NFTsId array 
+    function getNextRandomIndex(address[] storage array, uint256 entropy, uint256 v) internal view returns (uint256) {
+        // Picks a random index between 0 and the amount of IDs minus 1
+        return (uint128(entropy) * v) % array.length;
+    }
+
+
+
     /// @notice Remove index from array
     /// @dev overwrites the removed element with the last element of the array and pops it.
     /// @param index the number of the index to remove
@@ -41,6 +49,8 @@ library RandomArray {
         n ^= n >> 17;
         n ^= n << 5;
         r = n;
-    } 
+    }
+
+    
 
 }
