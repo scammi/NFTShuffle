@@ -2,6 +2,10 @@ import "@typechain/hardhat";
 import "@nomiclabs/hardhat-ethers";
 import "hardhat-deploy";
 
+import 'solidity-coverage'
+import "hardhat-gas-reporter"
+import "hardhat-storage-layout"
+
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -16,6 +20,10 @@ module.exports = {
     compilers: [
       {
         version: "0.8.7",
+        optimizer: {
+          enabled: true,
+          runs: 200
+        }
       },
       {
         version: "0.6.6",
