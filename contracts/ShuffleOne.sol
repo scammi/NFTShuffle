@@ -12,7 +12,7 @@ import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "./RandomArray.sol";
 
 /// @title SingleShuffle
-/// @author rloot
+/// @author rloot ()
 /// @notice ERC721 randomized distribution
 contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
     enum Status {
@@ -166,12 +166,9 @@ contract ShuffleOne is VRFConsumerBaseV2, ERC721, Ownable {
             revert();
         }
 
-        // Pick index from NFTsIds
-        uint256 randomIndex = RandomArray.getNextRandomIndex(
-            tickets,
-            _entropy,
-            ticket
-        );
+        // choose new id for `ticket`
+        // it isn't random, we just move the position `_entropy % amount` times
+        uint256 randomIndex = (_entropy + ticket) % TICKETS_AMOUNT;
 
         // Mint random NFT
         _mint(msg.sender, randomIndex);
