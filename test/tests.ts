@@ -51,44 +51,40 @@ describe("ShuffleOne", function () {
     });
   });
 
-  describe.skip("feature: randomness", function () {
-    it("requestRandom can only be called when raffle is CLOSED", async () => {});
-    it("when request", async () => {});
+  describe("feature: randomness", function () {
     describe("scenario: a ruffle uses randomness", async () => {
       let accounts: Wallet[];
-      beforeEach(async () => {
-        accounts = await createWallets(5);
-        await Promise.all(
-          accounts.map((acc) =>
-            raffle.connect(acc).buyTicket({ value: MINT_COST })
-          )
-        );
+      let tickets: BigNumberish[]
+      beforeEach(async () => {});
+      describe("GIVEN a finished ruffle and every sold ticket redeemed", async () => {
+        beforeEach(async () => {
+          accounts = await createWallets(5);
+          tickets = await Promise.all(
+            accounts.map(async(acc, i) => {
+              await raffle.connect(acc).buyTicket({ value: MINT_COST });
+              return i;
+            })
+          );
 
-        const request = await raffle.requestRandomness();
-        await request.wait();
+          const request = await raffle.requestRandomness();
+          await request.wait();
 
-        const fullfil = await vrfCoordinatorV2Mock.fulfillRandomWords(
-          raffle.getRequestId(),
-          raffle.address
-        );
-        await fullfil.wait();
-      });
-      describe("GIVEN a ruffle with status finished", async () => {
-        describe("WHEN all tickets are redeemed", async () => {
-          beforeEach(async () => {
-            await Promise.all(
-              accounts.map((acc) => raffle.connect(acc).mint())
-            );
-          });
-
-          it("THEN NFT's total supply should be x", async () => {
-            await expect(
-              raffle.ownerOf(accounts.length + 1)
-            ).to.be.revertedWith("ERC721: invalid token ID");
-          });
-          it("THEN ", async () => {});
-          it("THEN ", async () => {});
+          const fullfil = await vrfCoordinatorV2Mock.fulfillRandomWords(
+            raffle.getRequestId(),
+            raffle.address
+          );
+          await fullfil.wait();
+          await Promise.all(
+            accounts.map((acc, i) => raffle.connect(acc).mint(i))
+          );
         });
+        it("THEN NFT's total supply should be x", async () => {
+          await expect(raffle.ownerOf(accounts.length + 1)).to.be.revertedWith(
+            "ERC721: invalid token ID"
+          );
+        });
+        it("THEN ", async () => {});
+        it("THEN ", async () => {});
       });
     });
   });
@@ -100,63 +96,13 @@ describe("ShuffleOne", function () {
         // use enum / constant
         expect(await raffle.getStatus()).to.be.equal(0);
       });
-      describe("WHEN raffle ends because time's up", async () => {
-        beforeEach(async () => {
-          // replace with constant
-          await network.provider.send("hardhat_mine", ["0x3e8"]);
-        });
-
-        it("THEN raffle status is CLOSED", async () => {
-          // use enum / constant
-          expect(await raffle.getStatus()).to.be.equal(1);
-        });
-
-        it("THEN no one can buy more tickets", async () => {
-          await expect(
-            raffle.buyTicket({ value: MINT_COST })
-          ).to.be.revertedWithCustomError(raffle, "RaffleHasEnded");
-        });
-
-        it("THEN anyone can call requestRandomness", async () => {
-          await expect(raffle.requestRandomness()).to.emit(
-            vrfCoordinatorV2Mock,
-            "RandomWordsRequested"
-          );
-        });
-        describe("AND requestRandomness is called", async () => {
-          let requestId: BigNumber;
-          beforeEach(async () => {
-            // const fullfil = await vrfCoordinatorV2Mock.fulfillRandomWords(requestId, raffle.address)
-            // await fullfil.wait()
-            const request = await raffle.requestRandomness();
-            await request.wait();
-            requestId = await raffle.getRequestId();
-          });
-          it("THEN raffle status is REQUESTING", async () => {
-            expect(await raffle.getStatus()).to.be.equal(2);
-          });
-          it("THEN raffle requestId is non-zero", async () => {
-            expect(await raffle.getRequestId()).to.be.not.equal(0);
-          });
-          it("THEN after the request is fulfill the entropy is not zero", async () => {
-            const fullfil = await vrfCoordinatorV2Mock.fulfillRandomWords(
-              raffle.getRequestId(),
-              raffle.address
-            );
-            await fullfil.wait();
-            // check entropy is non zero
-          });
-        });
-      });
 
       describe("WHEN user buys one ticket", async () => {
         describe("BUT sends the incorrect amount", async () => {
-          it("THEN reverts because amount is lower than required", async () => {
+          it("THEN reverts because amount is not exactly X", async () => {
             await expect(
               raffle.buyTicket({ value: MINT_COST.sub(1) })
             ).to.be.revertedWithCustomError(raffle, "NotEnoughEther");
-          });
-          it("THEN reverts because amount is greater than required", async () => {
             await expect(
               raffle.buyTicket({ value: MINT_COST.add(1) })
             ).to.be.revertedWithCustomError(raffle, "NotEnoughEther");
@@ -174,6 +120,12 @@ describe("ShuffleOne", function () {
             const participant = await raffle.participants(user.address);
             expect(participant.redeemableTickets).to.equal(1);
           });
+          it("THEN sold tickets counter increases", async () => {
+            // beforeEach(async () => {})
+            const soldTicketsCounterBefore = await raffle.getSoldTickets()
+            await raffle.connect(anotherUser).buyTicket({ value: MINT_COST })
+            expect(await raffle.getSoldTickets()).to.be.greaterThan(soldTicketsCounterBefore)
+          });
           describe("WHEN user buys another ticket", async () => {
             it("THEN reverts because there is one ticket per address limit", async () => {
               await expect(
@@ -182,8 +134,6 @@ describe("ShuffleOne", function () {
             });
           });
         });
-        // it('AND there are no tickets left to buy', async() => {})
-        // it('BUT msg.value is too low', async() => {})
       });
 
       describe("WHEN all tickets were sold", async () => {
@@ -199,53 +149,8 @@ describe("ShuffleOne", function () {
           const ticket = await raffle.buyTicket({ value: MINT_COST });
           await ticket.wait();
         });
-        it("THEN anyone can request randomness", async () => {});
-        it("THEN it is not possible to buy a ticket", async () => {});
-
-        // describe('BUT entropy is not set', async() => {
-        describe("BUT randomness is not requested", async () => {
-          it("THEN anyone can request randomness", async () => {});
-        });
-
-        describe("AND randomness is requested", async () => {
-          it("THEN request randomness reverts", async () => {});
-        });
-        describe("AND entropy is not set", async () => {
-          it("THEN reverts", async () => {});
-        });
-
-        describe("AND entropy is set", async () => {
-          beforeEach(async () => {
-            const request = await raffle.requestRandomness();
-            await request.wait();
-            const requestId = await raffle.getRequestId();
-            // fulfill request
-            const fullfil = await vrfCoordinatorV2Mock.fulfillRandomWords(
-              requestId,
-              raffle.address
-            );
-            await fullfil.wait();
-          });
-          it("THEN entropy is not zero", async () => {
-            expect(raffle._entropy()).to.be.not.equal(0);
-          });
-
-          describe("AND user redeem a ticket", async () => {
-            beforeEach(async () => {
-              await raffle.connect(user).mint(4);
-            });
-            it("THEN user has zero redeemable tickets left", async () => {
-              const participant = await raffle.participants(user.address);
-              expect(participant.redeemableTickets).to.equal(0);
-              expect(await raffle.balanceOf(user.address)).to.equal(1);
-            });
-            it("THEN NFT is minted to user", async () => {
-              expect(await raffle.balanceOf(user.address)).to.equal(1);
-            });
-            it("THEN it is not possible to buy a ticket", async () => {});
-          });
-        });
       });
+
     });
   });
 
@@ -274,7 +179,7 @@ describe("ShuffleOne", function () {
               )
             );
             raffle = raffle.connect(user);
-          });    
+          });
           it("THEN raffle status is CLOSED", async () => {
             expect(await raffle.getStatus()).to.be.eq(1);
           });
@@ -426,22 +331,22 @@ describe("ShuffleOne", function () {
     describe("GIVEN a user with zero redeemable tickets", async () => {
       it("THEN ", async () => {});
     });
+  });
 
-    describe.only("scenario: owner withdraw funds", async() => {
-      describe("GIVEN a raffle with some funds in it", async () => {
-        beforeEach(async () => {
-          await raffle.connect(user).buyTicket({value: MINT_COST})
-        });
-        it("THEN the owner can withdraw funds", async () => {
-          await raffle.connect(admin).withdrawTo(anotherUser.address)
-        });
-        it("THEN non-owner cannot withdraw funds", async () => {
-          await expect(
-            raffle.connect(user).withdrawTo(anotherUser.address)
-          ).to.be.revertedWith('Ownable: caller is not the owner')
-        });
+  describe("scenario: owner withdraw funds", async () => {
+    describe("GIVEN a raffle with some funds in it", async () => {
+      beforeEach(async () => {
+        await raffle.connect(user).buyTicket({ value: MINT_COST });
       });
-    })
+      it("THEN the owner can withdraw funds", async () => {
+        await raffle.connect(admin).withdrawTo(anotherUser.address);
+      });
+      it("THEN non-owner cannot withdraw funds", async () => {
+        await expect(
+          raffle.connect(user).withdrawTo(anotherUser.address)
+        ).to.be.revertedWith("Ownable: caller is not the owner");
+      });
+    });
   });
 });
 
