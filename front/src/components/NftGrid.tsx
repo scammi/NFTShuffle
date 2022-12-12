@@ -4,9 +4,9 @@ import { Grid } from "@mui/material";
 // Components 
 import NftCard from "./NftCard";
 
-// const style = {
-//   centered: {  }
-// };
+const style = {
+  nftsGrid: { justifyContent: 'center'},
+};
 
 const NftDataArray = [1,2,3,4];
 const NftGrid = () => {
@@ -16,7 +16,7 @@ const NftGrid = () => {
   }
 
   return (
-    <Grid container sx={{ justifyContent: 'center'}}>
+    <Grid container sx={style.nftsGrid}>
       { NftDataArray.map(() => <CardGidItem />  )}
     </Grid>
   );
