@@ -7,6 +7,7 @@ import Layout from "../components/layout";
 import { useWeb3Context } from "../context/Web3";
 import { TicketView } from "../components/TicketView";
 import { GLOBALS } from "../utils/globals";
+import { NftGrid } from "../components/NftGrid";
 
 const IndexPage = () => { 
   const [ web3 ] = useWeb3Context();
@@ -23,10 +24,11 @@ const IndexPage = () => {
         <h1>
           Welcome to <b>NFTshuffle!</b>
         </h1>
-          {
-           web3.isConnected ? isNetworkSupported() ? <TicketView /> : 'Please select a supported network' : 
-            'Please connect wallet'
-          }
+        {
+          web3.isConnected ? isNetworkSupported() ? <TicketView /> : 'Please select a supported network' : 
+          'Please connect wallet'
+        }
+        <NftGrid />
       </div>
     </Layout>
   )
