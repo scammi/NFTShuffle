@@ -117,7 +117,6 @@ const TicketView = ({ }: Props) => {
       {(ticketsLeft > 0) ? `Tickets left ${ticketsLeft}` : 'Sold out !!!!'}
       <div>
         { 
-          
           canBuy && <BuyTicketButton /> 
           || canMint && <MintTokenButton /> 
           || canRequestRandomness && <RequestRandomnessButton />
