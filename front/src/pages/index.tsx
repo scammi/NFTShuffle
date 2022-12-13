@@ -1,34 +1,23 @@
 import * as React from "react";
 
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+
 import Seo from '../components/seo';
 import Layout from '../components/layout';
 
-import { useWeb3Context } from '../context/Web3';
-import { TicketView } from '../components/TicketView';
-import { GLOBALS } from '../utils/globals';
 import { NftGrid } from '../components/NftGrid';
 
-import Box from '@mui/material/Box';
-
 const IndexPage = () => { 
-  const [ web3 ] = useWeb3Context();
-
-  const isNetworkSupported = () => {
-    const supportedNetworks = Object.keys(GLOBALS.CONTRACT_ADDRESSES.shuffleOne);
-    return supportedNetworks.includes(String(web3.chainId));
-  };
 
   return (
     <Layout>
       <Seo title="Home" />
       <Box sx={{ textAlign: 'center' }}>
         <h1>
-          Welcome to <b>NFTshuffle!</b>
+          Welcome to <b>NFTshuffle</b>
         </h1>
-        {
-          web3.isConnected ? isNetworkSupported() ? <TicketView /> : 'Please select a supported network' : 
-          'Please connect wallet'
-        }
+        <Button href="/mint"> Mint </ Button>
       </Box>
       <NftGrid />
     </Layout>

@@ -9,12 +9,13 @@ const style = {
     justifyContent: 'center',
   },
   nftGridItem: {
+    paddingTop: 6,
     paddingRight: 1,
     paddingLeft: 1
   }
 };
 
-const NftDataArray = [1,2,3,4];
+const NftDataArray = [1,2,3,4, 7, 8 ,9 ,10, 11];
 
 const NftGrid = () => {
 
@@ -22,7 +23,8 @@ const NftGrid = () => {
     return (
       <Grid 
         item 
-        xs={3}
+        sm={6}
+        lg={3}
         sx={ style.nftGridItem }
       > 
         <NftCard /> 
