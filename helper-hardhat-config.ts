@@ -1,4 +1,4 @@
-const networkConfig = {
+export const networkConfig: any = {
     default: {
       name: "hardhat",
       fee: "100000000000000000",
@@ -45,14 +45,7 @@ const networkConfig = {
     },
   }
   
-  const developmentChains = ["hardhat", "localhost"]
-  const VERIFICATION_BLOCK_CONFIRMATIONS = 6
-  const RAFFLE_FINALIZATION_BLOCKNUMBER = 1000;
-  
-  module.exports = {
-    networkConfig,
-    developmentChains,
-    VERIFICATION_BLOCK_CONFIRMATIONS,
-    RAFFLE_FINALIZATION_BLOCKNUMBER
-  }
-  
+export const developmentChains = ["hardhat", "localhost"]
+export const VERIFICATION_BLOCK_CONFIRMATIONS = 6
+export const RAFFLE_FINALIZATION_BLOCKNUMBER = 1000;
+    
