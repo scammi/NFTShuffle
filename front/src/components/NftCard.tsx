@@ -9,11 +9,10 @@ import PaperFloat from './PaperFloat';
 const NftCard = () => {
   return (
     <PaperFloat>
-      <Card sx={{ maxWidth: 345 }}>
+      <Card>
         <CardMedia
           component="img"
-          height="140"
-          image="/static/images/cards/contemplative-reptile.jpg"
+          image="https://ipfs.io/ipfs/QmdXgNrYqPMAKHAzAgDLYcEGwdW86b78RfnpKWfFnBERNZ"
           alt="green iguana"
         />
         <CardContent>
