@@ -1,5 +1,5 @@
 // Frameworks
-import React from 'react'
+import React, { useState } from 'react'
 import { useWeb3Context } from '../context/Web3';
 
 // Utils
@@ -33,8 +33,20 @@ export const ConnectDisconnectButton = () => {
 
   const DisconnectButton = () => {
     const displayAddress = shorthandAddressForDisplay(web3.connectedAccount);
+    const [ buttonTittle, setButtonTittle ] = useState(displayAddress);
 
-    return (<Button onClick={() => { _disconnectWallet() }}>{displayAddress}</Button>)
+
+    
+
+    return (
+      <Button
+       onClick={() => { _disconnectWallet() }}
+       onMouseEnter={() => { setButtonTittle('Disconnect') }}
+       onMouseLeave={() => { setButtonTittle(displayAddress) }}
+      >
+       {buttonTittle}
+      </Button>
+    );
   };
 
   return (
