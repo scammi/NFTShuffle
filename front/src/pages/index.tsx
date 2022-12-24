@@ -16,9 +16,14 @@ const IndexPage = () => {
   return (
     <Layout>
       <Seo title="Home" />
-      <Typography>
-        Welcome to NFTshuffle
-      </Typography>
+
+      <Grid container justifyContent="center">
+        <Grid item>
+          <Typography variant="h2">
+            Welcome to NFTshuffle
+          </Typography>
+        </Grid>
+      </Grid>
 
       <NftGrid />
 
