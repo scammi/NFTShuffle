@@ -1,6 +1,9 @@
 // Frameworks
 import React, { useState } from 'react'
+
+// Components
 import { useWeb3Context } from '../context/Web3';
+import PaperFloat from './PaperFloat';
 
 // Utils
 import { shorthandAddressForDisplay } from '../utils/address';
@@ -35,9 +38,6 @@ export const ConnectDisconnectButton = () => {
     const displayAddress = shorthandAddressForDisplay(web3.connectedAccount);
     const [ buttonTittle, setButtonTittle ] = useState(displayAddress);
 
-
-    
-
     return (
       <Button
        onClick={() => { _disconnectWallet() }}
@@ -50,11 +50,11 @@ export const ConnectDisconnectButton = () => {
   };
 
   return (
-    <div>
+    <PaperFloat>
       {web3.isConnected && (
         <DisconnectButton/>
       )}
       {!web3.isConnected && <ConnectButton />}
-    </div>
+    </PaperFloat>
   )
 }
