@@ -6,6 +6,7 @@ import { Link } from "gatsby"
 // MUI
 import { Box } from "@mui/material"
 
+// Components
 import { MetamaskConnect } from "./MetamaskConnect"
 
 const Header = ({ siteTitle }) => {

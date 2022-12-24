@@ -1,11 +1,12 @@
 import React from 'react'
 import { useWeb3Context } from '../context/Web3';
 
+import { shorthandAddressForDisplay } from '../utils/address';
+
 export const MetamaskConnect = () => {
   const [web3, , connect, disconnect] = useWeb3Context();
 
   const _connectWallet = async () => {
-    console.log("HEY I RUN JS !!!!!!");
     try {
       await connect();
     } catch (err) {
@@ -36,7 +37,7 @@ export const MetamaskConnect = () => {
       {web3.isConnected && (
         <div>
           <div className="inline">
-            <div className="account">{web3.connectedAccount}</div>
+            <div className="account">{shorthandAddressForDisplay(web3.connectedAccount)}</div>
             <DisconnectButton/>
           </div>
           <br />
