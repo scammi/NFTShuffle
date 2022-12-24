@@ -23,25 +23,19 @@ export const MetamaskConnect = () => {
   }
 
   const ConnectButton = () => (
-    <div>
-      <button onClick={() => { _connectWallet() }}>Connect</button>
-    </div>
+    <button onClick={() => { _connectWallet() }}>Connect</button>
   );
 
-  const DisconnectButton = () => (
-    <button onClick={() => { _disconnectWallet() }}>Disconnect</button>
-  )
+  const DisconnectButton = () => {
+    const displayAddress = shorthandAddressForDisplay(web3.connectedAccount);
+
+    return (<button onClick={() => { _disconnectWallet() }}>{displayAddress}</button>)
+  };
 
   return (
     <div>
       {web3.isConnected && (
-        <div>
-          <div className="inline">
-            <div className="account">{shorthandAddressForDisplay(web3.connectedAccount)}</div>
-            <DisconnectButton/>
-          </div>
-          <br />
-        </div>
+        <DisconnectButton/>
       )}
       {!web3.isConnected && <ConnectButton />}
     </div>
