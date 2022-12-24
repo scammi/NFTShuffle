@@ -1,10 +1,15 @@
+// Frameworks
 import React from 'react'
 import { useWeb3Context } from '../context/Web3';
 
+// Utils
 import { shorthandAddressForDisplay } from '../utils/address';
 
+// MUI
+import { Button } from '@mui/material';
+
 export const ConnectDisconnectButton = () => {
-  const [web3, , connect, disconnect] = useWeb3Context();
+  const [ web3, , connect, disconnect ] = useWeb3Context();
 
   const _connectWallet = async () => {
     try {
@@ -23,13 +28,13 @@ export const ConnectDisconnectButton = () => {
   }
 
   const ConnectButton = () => (
-    <button onClick={() => { _connectWallet() }}>Connect</button>
+    <Button onClick={() => { _connectWallet() }}>Connect</Button>
   );
 
   const DisconnectButton = () => {
     const displayAddress = shorthandAddressForDisplay(web3.connectedAccount);
 
-    return (<button onClick={() => { _disconnectWallet() }}>{displayAddress}</button>)
+    return (<Button onClick={() => { _disconnectWallet() }}>{displayAddress}</Button>)
   };
 
   return (

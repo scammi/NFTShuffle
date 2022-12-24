@@ -7,7 +7,7 @@ import { Link } from "gatsby"
 import { Box } from "@mui/material"
 
 // Components
-import { ConnectDisconnectButton } from "./MetamaskConnect"
+import { ConnectDisconnectButton } from "./ConnectDisconnectButton"
 
 const Header = ({ siteTitle }) => {
 
