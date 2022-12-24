@@ -3,28 +3,35 @@ import React from 'react';
 import ReactCardCarousel from 'react-card-carousel';
 
 // MUI
-import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
 
 // Components 
 import NftCard from './NftCard';
 
 const style = {
   nftsGrid: {
-    // justifyContent: 'center',
+    position: "relative",
+    top: 290
+    // position: "static",
+    // position: "absolute",
+    // top: 300,
+    // left: 500,
+    // top: '150px'
+    // height: "100px",
+    // width: "100%",
+    // display: "flex",
+    // flex: 1,
+    // justifyContent: "center",
+    // alignItems: "middle"
   },
   nftGridItem: {
-    // height: "200px",
+    // position: "relative",
+    // height: "100px",
     // width: "200px",
     // paddingTop: "80px",
-    // textAlign: "center",
-    // background: "#52C0F5",
     // color: "#FFF",
-    // fontFamily: "sans-serif",
-    // fontSize: "12px",
-    // textTransform: "uppercase",
     // borderRadius: "10px",
-    // boxSizing: "border-box" 
-    // paddingTop: 6,
+    // boxSizing: "border-box",
     // paddingRight: 1,
     // paddingLeft: 1
   }
@@ -36,21 +43,18 @@ const NftGrid = () => {
 
   const CardGidItem = () => {
     return (
-      <Grid
-        item
-        sx={style.nftGridItem}
-      >
+      <Box sx={style.nftGridItem}>
         <NftCard />
-      </Grid>
+      </Box>
     );
   };
 
   return (
-    <Grid container sx={style.nftsGrid}>
-      <ReactCardCarousel autoplay={true} autoplay_speed={2500} initial_index={5}>
+    <Box sx={style.nftsGrid}>
+      <ReactCardCarousel autoplay={true} autoplay_speed={4000}>
         {NftDataArray.map(() => <CardGidItem />)}
       </ReactCardCarousel>
-    </Grid>
+    </Box>
   );
 
 };

@@ -16,26 +16,17 @@ const IndexPage = () => {
   return (
     <Layout>
       <Seo title="Home" />
-      <Grid 
-        container
-        direction="column"
-        justifyContent="center"
-        alignItems="center"
-        spacing={3}
-      >
-        <Grid item>
-          <Typography>
-            Welcome to NFTshuffle
-          </Typography>
-        </Grid>
-        <Grid item>
-          <PaperFloat sxPaper={{ maxWidth: 80 }}>
-            <Button href="/mint"> Mint </ Button>
-          </PaperFloat>
-        </Grid>
-      </Grid>
+      <Typography>
+        Welcome to NFTshuffle
+      </Typography>
+
       <NftGrid />
+
+      <PaperFloat sxPaper={{ maxWidth: 100, position: 'relative', top: 520, left: '35vw', textAlign: 'center' }}>
+        <Button href="/mint"> Mint </ Button>
+      </PaperFloat>
     </Layout>
+
   )
 }
 
