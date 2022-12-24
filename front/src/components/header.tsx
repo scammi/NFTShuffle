@@ -7,7 +7,7 @@ import { Link } from "gatsby"
 import { Box } from "@mui/material"
 
 // Components
-import { MetamaskConnect } from "./MetamaskConnect"
+import { ConnectDisconnectButton } from "./MetamaskConnect"
 
 const Header = ({ siteTitle }) => {
 
@@ -29,7 +29,7 @@ const Header = ({ siteTitle }) => {
       >
         {siteTitle}
       </Link>
-      <MetamaskConnect />
+      <ConnectDisconnectButton />
     </Box>
   )
 }

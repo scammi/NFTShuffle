@@ -3,7 +3,7 @@ import { useWeb3Context } from '../context/Web3';
 
 import { shorthandAddressForDisplay } from '../utils/address';
 
-export const MetamaskConnect = () => {
+export const ConnectDisconnectButton = () => {
   const [web3, , connect, disconnect] = useWeb3Context();
 
   const _connectWallet = async () => {
