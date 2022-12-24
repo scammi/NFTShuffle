@@ -27,7 +27,7 @@ const IndexPage = () => {
 
       <NftGrid />
 
-      <PaperFloat sxPaper={{ maxWidth: 100, position: 'relative', top: 520, left: '35vw', textAlign: 'center' }}>
+      <PaperFloat sxPaper={{ maxWidth: 100, position: 'relative', top: 480, left: '35vw', textAlign: 'center' }}>
         <Button href="/mint"> Mint </ Button>
       </PaperFloat>
     </Layout>

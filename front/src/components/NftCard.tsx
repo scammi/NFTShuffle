@@ -6,18 +6,21 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import PaperFloat from './PaperFloat';
 
-const NftCard = () => {
+const NftCard = ({
+  imageUrl,
+  name,
+}) => {
   return (
     <PaperFloat>
       <Card>
         <CardMedia
           component="img"
-          image="https://ipfs.io/ipfs/QmdXgNrYqPMAKHAzAgDLYcEGwdW86b78RfnpKWfFnBERNZ"
+          image={imageUrl}
           alt="green iguana"
         />
         <CardContent>
-          <Typography gutterBottom variant="h5" component="div">
-            Lizard
+          <Typography gutterBottom variant="h5">
+            {name} 
           </Typography>
         </CardContent>
       </Card>

@@ -11,7 +11,7 @@ import NftCard from './NftCard';
 const style = {
   nftsGrid: {
     position: "relative",
-    top: 290
+    top: 240
     // position: "static",
     // position: "absolute",
     // top: 300,
@@ -37,14 +37,27 @@ const style = {
   }
 };
 
-const NftDataArray = [1, 2, 3, 4, 5, 6, 7];
+const NftDataArray = [
+  {
+    name: 'Tree God',
+    imageUrl: 'https://ipfs.io/ipfs/QmdXgNrYqPMAKHAzAgDLYcEGwdW86b78RfnpKWfFnBERNZ'
+  },
+  {
+    name: 'Golden Tree',
+    imageUrl: 'https://ipfs.io/ipfs/QmcWuSNUysTMaXjMnd3tikF9AFEH7rLL7fRBtTwrwTqpSB'
+  },
+  {
+    name: 'Witch Tree',
+    imageUrl: 'https://chargedparticles.infura-ipfs.io/ipfs/QmTowmErFfXvur4Zhd2MrK7p4AA4SWMToGXe7i6ZWQrPd7'
+  },
+] 
 
 const NftGrid = () => {
 
-  const CardGidItem = () => {
+  const CardGidItem = ({ nftName, nftImageUrl }) => {
     return (
       <Box sx={style.nftGridItem}>
-        <NftCard />
+        <NftCard name={nftName} imageUrl={nftImageUrl}/>
       </Box>
     );
   };
@@ -52,7 +65,7 @@ const NftGrid = () => {
   return (
     <Box sx={style.nftsGrid}>
       <ReactCardCarousel autoplay={true} autoplay_speed={4000}>
-        {NftDataArray.map(() => <CardGidItem />)}
+        {NftDataArray.map((tree) => <CardGidItem nftName={tree.name} nftImageUrl={tree.imageUrl} />)}
       </ReactCardCarousel>
     </Box>
   );
