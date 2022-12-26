@@ -14,6 +14,7 @@ import Container from '@mui/material/Container';
 
 import Header from "./header"
 import "./layout.css"
+import image from '../../public/bk_color_vertical.svg'
 
 const Layout = ({ children }) => {
   const data = useStaticQuery(graphql`
@@ -27,11 +28,11 @@ const Layout = ({ children }) => {
   `)
 
   return (
-    <>
+    <Box sx={{ backgroundImage: `url(${image})`, aspectRatio: '1/1.09', height: '100%', width: '100%', backgroundRepeat: 'none', backgroundSize: 'cover' }}>
       <Header siteTitle={data.site.siteMetadata?.title || `Title`} />
-      <Container>
-      </Container>
+      <Container >
         <main>{children}</main>
+      </Container>
         <Box sx={{
         position: 'relative',
         top: 650,
@@ -43,7 +44,7 @@ const Layout = ({ children }) => {
        }}
       > 
       </Box>
-    </>
+    </Box>
   )
 }
 
