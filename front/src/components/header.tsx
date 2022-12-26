@@ -25,6 +25,7 @@ const Header = ({ siteTitle }) => {
         to="/"
         style={{
           textDecoration: `none`,
+          color: 'black'
         }}
       >
         {siteTitle}

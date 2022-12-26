@@ -31,7 +31,7 @@ export const ConnectDisconnectButton = () => {
   }
 
   const ConnectButton = () => (
-    <Button onClick={() => { _connectWallet() }}>Connect</Button>
+    <Button sx={{ color: 'black' }} onClick={() => { _connectWallet() }}>Connect</Button>
   );
 
   const DisconnectButton = () => {
@@ -40,6 +40,7 @@ export const ConnectDisconnectButton = () => {
 
     return (
       <Button
+       sx={{ color: 'black' }}
        onClick={() => { _disconnectWallet() }}
        onMouseEnter={() => { setButtonTittle('Disconnect') }}
        onMouseLeave={() => { setButtonTittle(displayAddress) }}

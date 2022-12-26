@@ -14,7 +14,7 @@ import Container from '@mui/material/Container';
 
 import Header from "./header"
 import "./layout.css"
-import image from '../../public/bk_color_vertical.svg'
+import image from '../../public/br_color_light.svg'
 
 const Layout = ({ children }) => {
   const data = useStaticQuery(graphql`
