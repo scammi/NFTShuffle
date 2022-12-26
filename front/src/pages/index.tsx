@@ -68,7 +68,7 @@ const IndexPage = () => {
 
       <Box sx={{
         position: 'relative',
-        top: 620,
+        top: 600,
         maxWidth: '500px',
         left: '50%',
         transform: 'translateX(-50%)',
@@ -77,9 +77,7 @@ const IndexPage = () => {
         <Typography variant="h4" sx={{ textAlign: 'center' }} > About Shuffle </Typography>
         <PaperFloat sxPaper={{ padding: 2 }}>
           <Typography variant="body1">
-            <p>Santa.fm runs on the Santa Protocol, a decentralized peer-to-pool protocol for randomly-distributed NFT gift exchanges.</p>
-            <p>It was created by VenturePunk, a web3 product studio experimenting in the areas of decentralized finance and digital culture.</p>
-            <p>We leverage Chainlink VRF as a source of randomness.</p> 
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
           </Typography>
         </PaperFloat>
       </Box>

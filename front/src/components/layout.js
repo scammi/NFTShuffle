@@ -28,7 +28,7 @@ const Layout = ({ children }) => {
   `)
 
   return (
-    <Box sx={{ backgroundImage: `url(${image})`, aspectRatio: '1/1.09', height: '100%', width: '100%', backgroundRepeat: 'none', backgroundSize: 'cover' }}>
+    <Box sx={{ backgroundImage: `url(${image})`, aspectRatio: '1/1.07', height: '100%', width: '100%', backgroundRepeat: 'none', backgroundSize: 'cover' }}>
       <Header siteTitle={data.site.siteMetadata?.title || `Title`} />
       <Container >
         <main>{children}</main>
