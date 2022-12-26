@@ -1,32 +1,37 @@
+// Frameworks
 import * as React from "react"
 import PropTypes from "prop-types"
 import { Link } from "gatsby"
 
-import { MetamaskConnect } from "./MetamaskConnect"
+// MUI
+import { Box } from "@mui/material"
+
+// Components
+import { ConnectDisconnectButton } from "./ConnectDisconnectButton"
 
 const Header = ({ siteTitle }) => {
 
   return (
-    <header
-      style={{
-        margin: `0 auto`,
-        padding: `var(--space-4) var(--size-gutter)`,
-        display: `flex`,
-        alignItems: `center`,
-        justifyContent: `space-between`,
+    <Box
+      sx={{
+        margin: '0 auto',
+        padding: 4,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
       }}
     >
       <Link
         to="/"
         style={{
-          fontSize: `var(--font-sm)`,
           textDecoration: `none`,
+          color: 'black'
         }}
       >
         {siteTitle}
       </Link>
-      <MetamaskConnect />
-    </header>
+      <ConnectDisconnectButton />
+    </Box>
   )
 }
 
