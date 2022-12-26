@@ -12,6 +12,17 @@ import PaperFloat from "../components/PaperFloat";
 
 const IndexPage = () => { 
 
+  const styles = {
+    relativeCard: {
+      position: 'relative',
+      maxWidth: '500px',
+      left: '50%',
+      transform: 'translateX(-50%)',
+      marginTop: '30'
+    },
+    alignCenter: { textAlign: 'center' } 
+  }
+
   return (
     <Layout>
       <Seo title="Home" />
@@ -31,15 +42,11 @@ const IndexPage = () => {
       </PaperFloat> */}
 
       <Box sx={{
-        position: 'relative',
         top: 500,
-        maxWidth: '500px',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        marginTop: '30'
+        ...styles.relativeCard
        }}
       > 
-        <Typography variant="h4" sx={{ textAlign: 'center' }} > How it works </Typography>
+        <Typography variant="h4" sx={styles.alignCenter} > How it works </Typography>
         <PaperFloat sxPaper={{ padding: 2 }}>
         <ol>
           <li><b> Purchase ticket </b> <br/>  Participate in the ongoing ticket auction, the ticket will give you the right to mint. </li> 
@@ -50,14 +57,11 @@ const IndexPage = () => {
       </Box>
 
       <Box sx={{
-        position: 'relative',
         top: 550,
-        maxWidth: '500px',
-        left: '50%',
-        transform: 'translateX(-50%)',
+        ...styles.relativeCard
        }}
       > 
-        <Typography variant="h4" sx={{ textAlign: 'center' }} > FAQ </Typography>
+        <Typography variant="h4" sx={styles.alignCenter} > FAQ </Typography>
         <PaperFloat sxPaper={{ paddingRight: 2, paddingY: 2, marginLeft: 0, marginRight: 0 }}>
         <ul style={{ padding: 0 }}>
            <li style={{listStyleType: 'none'}}><b>Q. What’s a NFT fair distribution?</b> <br/> <b>A.</b> A mechanism for safely lunching and distributing NFTs in a safe and fair manner. </li>
@@ -67,25 +71,25 @@ const IndexPage = () => {
       </Box>
 
       <Box sx={{
-        position: 'relative',
-        top: 620,
-        maxWidth: '500px',
-        left: '50%',
-        transform: 'translateX(-50%)',
+        top: 600,
+        ...styles.relativeCard
        }}
       > 
-        <Typography variant="h4" sx={{ textAlign: 'center' }} > About Shuffle </Typography>
+        <Typography variant="h4" sx={styles.alignCenter} > About Shuffle </Typography>
         <PaperFloat sxPaper={{ padding: 2 }}>
           <Typography variant="body1">
-            <p>Santa.fm runs on the Santa Protocol, a decentralized peer-to-pool protocol for randomly-distributed NFT gift exchanges.</p>
-            <p>It was created by VenturePunk, a web3 product studio experimenting in the areas of decentralized finance and digital culture.</p>
-            <p>We leverage Chainlink VRF as a source of randomness.</p> 
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+          </Typography>
+          <br/>
+          <Typography variant="body1">
+            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+          </Typography>
+          <br/>
+          <Typography variant="body1">
+            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.
           </Typography>
         </PaperFloat>
       </Box>
-
-
-       
     </Layout>
 
   )
