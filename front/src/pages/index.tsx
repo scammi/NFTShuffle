@@ -40,7 +40,7 @@ const IndexPage = () => {
         marginTop: '30'
        }}
       > 
-        <Typography variant="h4" sx={{ textAlign: 'center' }} > About </Typography>
+        <Typography variant="h4" sx={{ textAlign: 'center' }} > How it works </Typography>
         <PaperFloat sxPaper={{ padding: 2 }}>
         <ol>
           <li><b> Purchase ticket </b> <br/>  Participate in the ongoing ticket auction, the ticket will give you the right to mint. </li> 
