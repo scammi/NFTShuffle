@@ -8,6 +8,8 @@
 import * as React from "react"
 import PropTypes from "prop-types"
 import { useStaticQuery, graphql } from "gatsby"
+
+import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 
 import Header from "./header"
@@ -28,15 +30,19 @@ const Layout = ({ children }) => {
     <>
       <Header siteTitle={data.site.siteMetadata?.title || `Title`} />
       <Container>
-        <main>{children}</main>
-        <footer
-          style={{
-            marginTop: `var(--space-5)`,
-            fontSize: `var(--font-sm)`,
-          }}
-        >
-        </footer>
       </Container>
+        <main>{children}</main>
+        <Box sx={{
+        position: 'relative',
+        top: 650,
+        width: '100%',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        height: '20px',
+        backgroundColor: 'Black'
+       }}
+      > 
+      </Box>
     </>
   )
 }
