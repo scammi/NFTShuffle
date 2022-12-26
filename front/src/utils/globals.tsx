@@ -2,7 +2,7 @@
 
 type GLOBALS = {
   INFURA_APIKEY: string;
-  CONTRACT_ADDRESSES: {};
+  CONTRACT_ADDRESSES: { shuffleOne: {} };
 }
 const GLOBALS: GLOBALS = {
   INFURA_APIKEY:  "aebcaf12b8f848048529c2682a65917e",
